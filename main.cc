@@ -9,14 +9,14 @@
 
 Vector2 playerPosition = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 float playerRotation = 0;
-const float ROTATE_SPEED = 150;
 
 Vector2 playerVelocity = { 0, 0 };
 
-const float MAX_PLAYER_SPEED = 200.f;
-const float ACCELERATION = 200.f;
+const float MAX_PLAYER_SPEED = 300.f;
+const float ACCELERATION = 350.f;
 const float DECELERATION = 100.f;
 const float DECELERATION_STOP_TOLERANCE = 0.01f;
+const float ROTATE_SPEED = -300;
 
 float deltaTime;
 
@@ -30,9 +30,6 @@ int main()
 	{
 		deltaTime = GetFrameTime();
 
-		ClearBackground({ 0, 82, 172, 255 });
-		BeginDrawing();
-
 		float rotationSin = std::sin(playerRotation * DEG_TO_RAD);
 		float rotationCos = std::cos(playerRotation * DEG_TO_RAD);
 
@@ -43,9 +40,30 @@ int main()
 		}
 		else 
 		{
-			playerRotation = std::fmod(float(playerRotation + ROTATE_SPEED * deltaTime), float(360.f));
+			playerRotation = std::fmod(playerRotation + ROTATE_SPEED * deltaTime, 360.f);
 		}
 		
+		float speed = std::sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.y * playerVelocity.y);
+		if (speed > 0) 
+		{
+			playerVelocity.x += -playerVelocity.x / speed * DECELERATION * deltaTime;
+			playerVelocity.y += -playerVelocity.y / speed * DECELERATION * deltaTime;
+
+			float newSpeed = std::sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.y * playerVelocity.y);
+			speed = newSpeed;
+			if (newSpeed < DECELERATION_STOP_TOLERANCE)
+			{
+				playerVelocity = { 0.0f, 0.0f };
+			}
+		}
+
+		if (speed > MAX_PLAYER_SPEED)
+		{
+			playerVelocity.x = (playerVelocity.x / speed) * MAX_PLAYER_SPEED;
+			playerVelocity.y = (playerVelocity.y / speed) * MAX_PLAYER_SPEED;
+		}
+
+		/*
 		if (std::abs(playerVelocity.x) > DECELERATION_STOP_TOLERANCE) {
 			if (playerVelocity.x > 0) playerVelocity.x -= DECELERATION * rotationCos * deltaTime;
 			else playerVelocity.x += DECELERATION * rotationCos * deltaTime;
@@ -59,6 +77,7 @@ int main()
 		if (playerVelocity.x < -MAX_PLAYER_SPEED) playerVelocity.x = -MAX_PLAYER_SPEED;
 		if (playerVelocity.y > MAX_PLAYER_SPEED) playerVelocity.y = MAX_PLAYER_SPEED;
 		if (playerVelocity.y < -MAX_PLAYER_SPEED) playerVelocity.y = -MAX_PLAYER_SPEED;
+		*/
 
 		playerPosition.x += playerVelocity.x * deltaTime;
 		playerPosition.y -= playerVelocity.y * deltaTime;
@@ -71,6 +90,9 @@ int main()
 		//std::cout << playerRotation << std::endl;
 		//std::cout << playerVelocity.x << ' ' << playerVelocity.y << std::endl;
 		std::cout << playerPosition.x << ' ' << playerPosition.y << std::endl;
+
+		ClearBackground({ 0, 82, 172, 255 });
+		BeginDrawing();
 
 		DrawTexturePro(playerTexture,
 			(Rectangle) { 0.0f, 0.0f, (float)playerTexture.width, (float)playerTexture.height },
