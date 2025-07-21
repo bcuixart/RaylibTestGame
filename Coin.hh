@@ -14,6 +14,8 @@ class Coin : public WorldObject {
 public:
 	Coin(Vector2 _position, float _rotation, float _scale);
 
+	virtual void Render();
+
 protected:
 
 private:

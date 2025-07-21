@@ -7,3 +7,8 @@ Coin::Coin(Vector2 _position, float _rotation, float _scale)
 	rotation = _rotation;
 	scale = _scale;
 }
+
+void Coin::Render() 
+{
+	DrawCircle(position.x, position.y, 10, YELLOW);
+}
