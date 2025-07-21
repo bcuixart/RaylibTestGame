@@ -28,7 +28,7 @@ int main()
 		player.Update(deltaTime);
 		world.Update(player.getPlayerPosition());
 
-		ClearBackground({ 0, 82, 172, 255 });
+		ClearBackground({ 48, 26, 80, 255 });
 		BeginDrawing();
 
 		camera.Update(player.getPlayerPosition(), GetScreenWidth(), GetScreenHeight(), deltaTime);

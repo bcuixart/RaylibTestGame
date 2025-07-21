@@ -34,6 +34,7 @@ private:
 	const float ROTATE_SPEED = -300;
 
 	Texture playerTexture = LoadTexture("Assets/Player_Arrow.png");
+	bool drawDirectionPoints = false;
 
 	const bool DEBUG_PRINT_POS = false;
 	const bool DEBUG_PRINT_ROT = false;

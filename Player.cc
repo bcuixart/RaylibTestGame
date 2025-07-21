@@ -47,13 +47,6 @@ void Player::Update(float deltaTime)
 	playerPosition.x += playerVelocity.x * deltaTime;
 	playerPosition.y -= playerVelocity.y * deltaTime;
 
-	/*
-	if (playerPosition.x < 0) playerPosition.x = 500;
-	if (playerPosition.x > 500) playerPosition.x = 0;
-	if (playerPosition.y > 500) playerPosition.y = -23;
-	if (playerPosition.y < -23) playerPosition.y = 500;
-	*/
-
 	if (DEBUG_PRINT_ROT) std::cout << playerRotation << std::endl;
 	if (DEBUG_PRINT_POS) std::cout << playerPosition.x << ' ' << playerPosition.y << std::endl;
 	if (DEBUG_PRINT_VEL) std::cout << playerVelocity.x << ' ' << playerVelocity.y << std::endl;
@@ -69,4 +62,29 @@ void Player::Render()
 		-playerRotation + 90,
 		WHITE
 	);
+
+	if (drawDirectionPoints) 
+	{
+		float rotationSin = std::sin((-playerRotation) * DEG_TO_RAD);
+		float rotationCos = std::cos((-playerRotation) * DEG_TO_RAD);
+
+		Vector2 directionPoint1 = {
+			playerPosition.x + 20 * rotationCos,
+			playerPosition.y + 20 * rotationSin
+		};
+
+		Vector2 directionPoint2 = {
+			playerPosition.x + 30 * rotationCos,
+			playerPosition.y + 30 * rotationSin
+		};
+
+		Vector2 directionPoint3 = {
+			playerPosition.x + 40 * rotationCos,
+			playerPosition.y + 40 * rotationSin
+		};
+
+		DrawCircle(directionPoint1.x, directionPoint1.y, 1.5f, WHITE);
+		DrawCircle(directionPoint2.x, directionPoint2.y, 1.5f, WHITE);
+		DrawCircle(directionPoint3.x, directionPoint3.y, 1.25f, GRAY);
+	}
 }
