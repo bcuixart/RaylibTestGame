@@ -5,11 +5,24 @@ CameraManager::CameraManager()
 
 }
 
+Vector2 CameraManager::getCameraPosition() 
+{
+	return cameraPosition;
+}
+
 void CameraManager::Update(Vector2 playerPosition, int screenWidth, int screenHeight, float deltaTime)
 {
 	camera = { 0 };
 
-	camera.target = playerPosition;
+	float distance = Vector2Distance(playerPosition, cameraPosition);
+	Vector2 direction = Vector2Normalize(playerPosition - cameraPosition);
+
+	cameraSpeed = min(distance / CAMERA_FAST_DISTANCE * CAMERA_SPEED_SLOW, CAMERA_SPEED_FAST);
+
+	cameraPosition.x += direction.x * cameraSpeed * deltaTime;
+	cameraPosition.y += direction.y * cameraSpeed * deltaTime;
+
+	camera.target = cameraPosition;
 	camera.offset = (Vector2){ float(screenWidth / 2), float(screenHeight / 2) };
 	camera.rotation = 0.0f;
 	camera.zoom = 1.0f;

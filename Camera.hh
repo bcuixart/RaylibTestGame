@@ -16,13 +16,20 @@ public:
 
 	void MBeginMode2D();
 
+	Vector2 getCameraPosition();
+
 protected:
 
 private:
 	Camera2D camera = { 0 };
 
 	Vector2 cameraPosition = { 0,0 };
-	float cameraSpeed = 300.0f;
+
+	const float CAMERA_FAST_DISTANCE = 50;
+	const float CAMERA_SPEED_SLOW = 150;
+	const float CAMERA_SPEED_FAST = 300;
+
+	float cameraSpeed;
 };
 
 #endif
