@@ -7,23 +7,10 @@
 
 #include "Player.hh"
 #include "Camera.hh"
-#include "Coin.hh"
+#include "World.hh"
 
 #define SCREEN_WIDTH 500
 #define SCREEN_HEIGHT 500
-
-float generateRandomFromSeed(const Vector2& pos, unsigned int seed) {
-	unsigned int hash = seed;
-
-	hash ^= static_cast<unsigned int>(pos.x * 1000);
-	hash ^= static_cast<unsigned int>(pos.y * 1000);
-
-	hash = (hash ^ (hash >> 16)) * 0x45d9f3b;
-	hash = (hash ^ (hash >> 16)) * 0x45d9f3b;
-	hash = hash ^ (hash >> 16);
-
-	return (static_cast<float>(hash) / std::numeric_limits<unsigned int>::max());
-}
 
 int main() 
 {
@@ -31,6 +18,8 @@ int main()
 
 	Player player = Player();
 	CameraManager camera = CameraManager();
+
+	World world = World(0);
 
 	/*
 	vector<Coin> coins;
@@ -47,6 +36,7 @@ int main()
 		float deltaTime = GetFrameTime();
 
 		player.Update(deltaTime);
+		world.Update(player.getPlayerPosition());
 		//for (int i = 0; i < coins.size(); ++i) coins[i].Update();
 
 		ClearBackground({ 0, 82, 172, 255 });
@@ -56,6 +46,7 @@ int main()
 		camera.MBeginMode2D();
 
 		player.Render();
+		world.Render();
 		//for (int i = 0; i < coins.size(); ++i) coins[i].Render();
 
 		EndDrawing();
