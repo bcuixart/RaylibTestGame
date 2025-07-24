@@ -13,13 +13,15 @@
 #define SCREEN_WIDTH 500
 #define SCREEN_HEIGHT 500
 
+const bool DEBUG_PRINT_SEED = false;
+
 void StartGame(Player& player, World& world, CameraManager& camera) 
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 
 	unsigned int randomSeed = static_cast<unsigned int>(gen());
-	std::cout << randomSeed << std::endl;
+	if (DEBUG_PRINT_SEED) std::cout << "Seed:" << randomSeed << std::endl;
 
 	world.ClearWorld();
 	world.Start(randomSeed);
