@@ -92,8 +92,8 @@ void Player::Render()
 	DrawTexturePro(
 		playerTexture,
 		(Rectangle) { 0.0f, 0.0f, (float)playerTexture.width, (float)playerTexture.height },
-		(Rectangle) { playerPosition.x, playerPosition.y, (float)playerTexture.width, (float)playerTexture.height },
-		(Vector2) { (float)playerTexture.width * 1 / 2, (float)playerTexture.height * 1 / 2 },
+		(Rectangle) { playerPosition.x, playerPosition.y, (float)playerTexture.width / 4, (float)playerTexture.height / 4},
+		(Vector2) { (float)playerTexture.width * 1 / 8, (float)playerTexture.height * 1 / 8 },
 		-playerRotation + 90,
 		WHITE
 	);

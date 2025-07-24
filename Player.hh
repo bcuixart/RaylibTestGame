@@ -42,9 +42,9 @@ private:
 	const float DECELERATION_STOP_TOLERANCE = 0.01f;
 	const float ROTATE_SPEED = -300;
 
-	const float HITBOX_RADIUS = 10;
+	const float HITBOX_RADIUS = 12;
 
-	Texture playerTexture = LoadTexture("Assets/Player_Arrow.png");
+	Texture playerTexture = LoadTexture("Assets/Player_Rocket2.png");
 	bool drawDirectionPoints = false;
 
 	const bool DEBUG_PRINT_POS = false;
