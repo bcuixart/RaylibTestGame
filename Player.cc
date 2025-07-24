@@ -23,6 +23,8 @@ void Player::Start()
 	playerPosition.x = 0;
 	playerPosition.y = 0;
 	playerRotation = 90;
+
+	currentPlayerTexture = 0;
 }
 
 void Player::KillPlayer() 
@@ -51,10 +53,14 @@ int Player::Update(float deltaTime)
 	{
 		playerVelocity.x += ACCELERATION * rotationCos * deltaTime;
 		playerVelocity.y += ACCELERATION * rotationSin * deltaTime;
+
+		currentPlayerTexture = 1;
 	}
 	else
 	{
 		playerRotation = std::fmod(playerRotation + ROTATE_SPEED * deltaTime, 360.f);
+
+		currentPlayerTexture = 0;
 	}
 
 	float speed = std::sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.y * playerVelocity.y);
@@ -90,10 +96,10 @@ int Player::Update(float deltaTime)
 void Player::Render() 
 {
 	DrawTexturePro(
-		playerTexture,
-		(Rectangle) { 0.0f, 0.0f, (float)playerTexture.width, (float)playerTexture.height },
-		(Rectangle) { playerPosition.x, playerPosition.y, (float)playerTexture.width / 4, (float)playerTexture.height / 4},
-		(Vector2) { (float)playerTexture.width * 1 / 8, (float)playerTexture.height * 1 / 8 },
+		playerTextures[currentPlayerTexture],
+		(Rectangle) { 0.0f, 0.0f, (float)textureWidth, (float)textureHeight },
+		(Rectangle) { playerPosition.x, playerPosition.y, (float)textureWidth / 4, (float)textureHeight / 4},
+		(Vector2) { (float)textureWidth * 1 / 8, (float)textureHeight * 1 / 8 },
 		-playerRotation + 90,
 		WHITE
 	);

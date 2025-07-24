@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <random>
 
 #include "raylib.h"
 #include "raymath.h"
@@ -14,8 +15,14 @@
 
 void StartGame(Player& player, World& world, CameraManager& camera) 
 {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	unsigned int randomSeed = static_cast<unsigned int>(gen());
+	std::cout << randomSeed << std::endl;
+
 	world.ClearWorld();
-	world.Start(0);
+	world.Start(randomSeed);
 	player.Start();
 	camera.Start();
 }

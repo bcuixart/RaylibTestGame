@@ -44,7 +44,14 @@ private:
 
 	const float HITBOX_RADIUS = 12;
 
-	Texture playerTexture = LoadTexture("Assets/Player_Rocket2.png");
+	const Texture playerTextures[2] = { 
+		LoadTexture("Assets/Player_Rocket_001.png"),
+		LoadTexture("Assets/Player_Rocket_002.png"),
+	};
+	int textureWidth = playerTextures[0].width;
+	int textureHeight = playerTextures[0].height;
+	int currentPlayerTexture = 0;
+
 	bool drawDirectionPoints = false;
 
 	const bool DEBUG_PRINT_POS = false;

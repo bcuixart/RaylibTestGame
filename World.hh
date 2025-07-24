@@ -50,7 +50,7 @@ private:
 	Texture obstacleTexture = LoadTexture("Assets/Obstacle_001.png");
 
 	const float CHUNK_SIZE = 500;
-	const float CHUNK_OBJECT_SIZE = 100;
+	const float CHUNK_OBJECT_SIZE = 150;
 	const int PLAYER_LOAD_CHUNK_RADIUS = 2;
 
 	const bool DEBUG_PRINT_CHUNKINFO = false;

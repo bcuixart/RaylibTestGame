@@ -12,6 +12,8 @@ Obstacle::Obstacle(Vector2 _position, float _rotation, float _scale, const Textu
 
 int Obstacle::CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const
 {
+	if (DEBUG_PLAYER_INVINCIBLE) return -1;
+
 	if (CheckCollisionCircles(position, scale * OBSTACLE_RADIUS_SCALE_MULTIPLIER, playerPos, playerRadius)) return 0;
 	return -1;
 }

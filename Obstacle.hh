@@ -21,7 +21,9 @@ public:
 protected:
 
 private:
-	const float OBSTACLE_RADIUS_SCALE_MULTIPLIER = 230;
+	const float OBSTACLE_RADIUS_SCALE_MULTIPLIER = 250;
+
+	const bool DEBUG_PLAYER_INVINCIBLE = false;
 };
 
 #endif

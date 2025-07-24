@@ -103,6 +103,12 @@ void World::LoadChunk(const pair<int, int>& chunk)
 	int minY = chunk.second * CHUNK_SIZE - CHUNK_SIZE / 2 + CHUNK_OBJECT_SIZE / 2;
 	int maxY = chunk.second * CHUNK_SIZE + CHUNK_SIZE / 2 - CHUNK_OBJECT_SIZE / 2;
 
+	int chunkDistance = sqrt(chunk.first * chunk.first + chunk.second * chunk.second);
+
+	float chanceToSpawnCoin = 0.1f;
+	float chanceToSpawnObstacle = min(0.05f + 0.001f * chunkDistance, 0.3f);
+	if (chunk.first == 0 && chunk.second == 0) chanceToSpawnObstacle = chanceToSpawnCoin = 0;
+
 	for (int x = minX; x <= maxX; x += CHUNK_OBJECT_SIZE) {
 		for (int y = minY; y <= maxY; y += CHUNK_OBJECT_SIZE) {
 			float chanceToSpawnObject = getRandomNumberFromSeed(x, y);
@@ -111,7 +117,7 @@ void World::LoadChunk(const pair<int, int>& chunk)
 			if (chanceToSpawnObject > 0.075f && chanceToSpawnObject < 0.5f)
 			{
 				worldObjects[chunk].push_back(
-					new WorldObject({ float(x),float(y) },
+					new WorldObject({ float(x + chanceToSpawnObject*200),float(y + chanceToSpawnObject*200) },
 						0,
 						getRandomNumberBetween(1, 5, x, y),
 						coinTexture)
@@ -119,7 +125,7 @@ void World::LoadChunk(const pair<int, int>& chunk)
 			}
 
 			// Coins
-			if (chanceToSpawnObject <= 0.1f && collectedCoins.find({ x,y }) == collectedCoins.end())
+			if (chanceToSpawnObject <= chanceToSpawnCoin && collectedCoins.find({ x,y }) == collectedCoins.end())
 			{
 				worldObjects[chunk].push_back(
 					new Coin({ float(x),float(y) }, 
@@ -127,12 +133,10 @@ void World::LoadChunk(const pair<int, int>& chunk)
 					.65f * chanceToSpawnObject + 0.065f / 2, 
 					coinTexture)
 				);
-
-				continue;
 			}
 
 			// Obstacle
-			if (chanceToSpawnObject <= 0.15f)
+			if (chanceToSpawnObject >= 1 - chanceToSpawnObstacle)
 			{
 				worldObjects[chunk].push_back(
 					new Obstacle({ float(x),float(y) },
