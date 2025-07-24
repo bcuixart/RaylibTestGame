@@ -1,5 +1,5 @@
-#ifndef COIN_HH
-#define COIN_HH
+#ifndef OBSTACLE_HH
+#define OBSTACLE_HH
 
 #include <iostream>
 
@@ -10,9 +10,9 @@
 
 using namespace std;
 
-class Coin : public WorldObject {
+class Obstacle : public WorldObject {
 public:
-	Coin(Vector2 _position, float _rotation, float _scale, const Texture& _texture);
+	Obstacle(Vector2 _position, float _rotation, float _scale, const Texture& _texture);
 
 	virtual void Render();
 
@@ -21,7 +21,7 @@ public:
 protected:
 
 private:
-	const float COIN_RADIUS_SCALE_MULTIPLIER = 250;
+	const float OBSTACLE_RADIUS_SCALE_MULTIPLIER = 230;
 };
 
 #endif

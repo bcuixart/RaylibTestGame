@@ -2,15 +2,48 @@
 
 Player::Player() 
 {
-
+	Start();
 }
 
 Vector2 Player::getPlayerPosition() const {
 	return playerPosition;
 }
 
-void Player::Update(float deltaTime)
+float Player::getPlayerRadius() const {
+	return HITBOX_RADIUS;
+}
+
+void Player::Start() 
 {
+	currentState = WaitingToStart;
+
+	playerVelocity.x = 0;
+	playerVelocity.y = 0;
+
+	playerPosition.x = 0;
+	playerPosition.y = 0;
+	playerRotation = 90;
+}
+
+void Player::KillPlayer() 
+{
+	currentState = Dead;
+}
+
+int Player::Update(float deltaTime)
+{
+	if (currentState == Dead) 
+	{
+		if (IsKeyPressed(KEY_SPACE)) return 1;
+		return 0;
+	}
+
+	if (currentState == WaitingToStart) 
+	{
+		if (!IsKeyPressed(KEY_SPACE)) return 0;
+		currentState = Playing;
+	}
+
 	float rotationSin = std::sin(playerRotation * DEG_TO_RAD);
 	float rotationCos = std::cos(playerRotation * DEG_TO_RAD);
 
@@ -50,6 +83,8 @@ void Player::Update(float deltaTime)
 	if (DEBUG_PRINT_ROT) std::cout << playerRotation << std::endl;
 	if (DEBUG_PRINT_POS) std::cout << playerPosition.x << ' ' << playerPosition.y << std::endl;
 	if (DEBUG_PRINT_VEL) std::cout << playerVelocity.x << ' ' << playerVelocity.y << std::endl;
+
+	return 0;
 }
 
 void Player::Render() 
@@ -87,4 +122,6 @@ void Player::Render()
 		DrawCircle(directionPoint2.x, directionPoint2.y, 1.5f, WHITE);
 		DrawCircle(directionPoint3.x, directionPoint3.y, 1.25f, GRAY);
 	}
+
+	if (DEBUG_SHOW_HITBOX) DrawCircleLines(playerPosition.x, playerPosition.y, HITBOX_RADIUS, BLUE);
 }

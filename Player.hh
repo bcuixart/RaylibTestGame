@@ -14,14 +14,23 @@ class Player {
 public:
 	Player();
 
-	void Update(float deltaTime);
+	int Update(float deltaTime);
 	void Render();
 
+	void Start();
+
+	void KillPlayer();
+
 	Vector2 getPlayerPosition() const;
+	float getPlayerRadius() const;
 
 protected:
 
 private:
+	enum PlayerState { WaitingToStart, Playing, Dead };
+
+	PlayerState currentState = WaitingToStart;
+
 	Vector2 playerPosition = { 0, 0 };
 	float playerRotation = 0;
 
@@ -33,12 +42,16 @@ private:
 	const float DECELERATION_STOP_TOLERANCE = 0.01f;
 	const float ROTATE_SPEED = -300;
 
+	const float HITBOX_RADIUS = 10;
+
 	Texture playerTexture = LoadTexture("Assets/Player_Arrow.png");
 	bool drawDirectionPoints = false;
 
 	const bool DEBUG_PRINT_POS = false;
 	const bool DEBUG_PRINT_ROT = false;
 	const bool DEBUG_PRINT_VEL = false;
+	
+	const bool DEBUG_SHOW_HITBOX = false;
 };
 
 #endif

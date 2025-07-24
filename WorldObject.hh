@@ -10,11 +10,13 @@ using namespace std;
 
 class WorldObject {
 public:
-	WorldObject(Vector2 _position, float _rotation, float _scale);
+	WorldObject(Vector2 _position, float _rotation, float _scale, const Texture& _texture);
 	virtual ~WorldObject() = default;
 
 	virtual void Update();
 	virtual void Render();
+
+	virtual int CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const;
 
 	Vector2 getPosition() const;
 	float getRotation() const;
@@ -24,6 +26,10 @@ protected:
 	Vector2 position;
 	float rotation;
 	float scale;
+
+	Texture texture;
+
+	const bool DEBUG_SHOW_OBJECTS_HITBOX = false;
 
 private:
 

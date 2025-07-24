@@ -5,6 +5,12 @@ CameraManager::CameraManager()
 
 }
 
+void CameraManager::Start() 
+{
+	cameraPosition.x = 0;
+	cameraPosition.y = 0;
+}
+
 Vector2 CameraManager::getCameraPosition() 
 {
 	return cameraPosition;

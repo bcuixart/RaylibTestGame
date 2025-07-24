@@ -14,6 +14,8 @@ public:
 
 	void Update(Vector2 playerPosition, int screenWidth, int screenHeight, float deltaTime);
 
+	void Start();
+
 	void MBeginMode2D();
 
 	Vector2 getCameraPosition();

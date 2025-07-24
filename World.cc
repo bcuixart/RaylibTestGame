@@ -1,24 +1,54 @@
 #include "World.hh"
 
-World::World(int _seed) 
+World::World() 
 {
-	seed = _seed;
 	worldObjects = map<pair<int, int>, vector<WorldObject*>>();
 	loadedChunks = set<pair<int, int>>();
+	collectedCoins = set<pair<int, int>>();
+}
+
+void World::Start(int _seed) 
+{
+	seed = _seed;
+
+	worldObjects = map<pair<int, int>, vector<WorldObject*>>();
+	loadedChunks = set<pair<int, int>>();
+	collectedCoins = set<pair<int, int>>();
+}
+
+void World::ClearWorld() 
+{
+	for (auto it = loadedChunks.begin(); it != loadedChunks.end(); )
+	{
+		pair<int, int> chunk = *it;
+		UnloadChunk(chunk);
+
+		it = loadedChunks.erase(it);
+	}
 }
 
 float World::getRandomNumberFromSeed(int x, int y) const 
 {
 	unsigned int hash = seed;
 
-	hash ^= static_cast<unsigned int>(x * 1000);
-	hash ^= static_cast<unsigned int>(y * 1000);
+	hash ^= (static_cast<unsigned int>(x) * 928371) ^ (static_cast<unsigned int>(y) * 982451);
 
 	hash = (hash ^ (hash >> 16)) * 0x45d9f3b;
 	hash = (hash ^ (hash >> 16)) * 0x45d9f3b;
 	hash = hash ^ (hash >> 16);
 
-	return (static_cast<float>(hash) / std::numeric_limits<unsigned int>::max());
+	hash ^= hash >> 6;
+	hash *= 0x6D2B79F5;
+	hash ^= hash >> 16;
+
+	return static_cast<float>(hash) / std::numeric_limits<unsigned int>::max();
+}
+
+float World::getRandomNumberBetween(float min, float max, int x, int y) const 
+{
+	float random = getRandomNumberFromSeed(x, y);
+
+	return min + (max - min) * random;
 }
 
 void World::LoadUnloadChunks(const Vector2& playerPosition)
@@ -77,9 +107,39 @@ void World::LoadChunk(const pair<int, int>& chunk)
 		for (int y = minY; y <= maxY; y += CHUNK_OBJECT_SIZE) {
 			float chanceToSpawnObject = getRandomNumberFromSeed(x, y);
 
-			if (chanceToSpawnObject <= 0.1f) 
+			// BG Stars
+			if (chanceToSpawnObject > 0.075f && chanceToSpawnObject < 0.5f)
 			{
-				worldObjects[chunk].push_back(new Coin({ float(x),float(y) }, 0.f, 1.f));
+				worldObjects[chunk].push_back(
+					new WorldObject({ float(x),float(y) },
+						0,
+						getRandomNumberBetween(1, 5, x, y),
+						coinTexture)
+				);
+			}
+
+			// Coins
+			if (chanceToSpawnObject <= 0.1f && collectedCoins.find({ x,y }) == collectedCoins.end())
+			{
+				worldObjects[chunk].push_back(
+					new Coin({ float(x),float(y) }, 
+					getRandomNumberBetween(0, 3600, x, y),
+					.65f * chanceToSpawnObject + 0.065f / 2, 
+					coinTexture)
+				);
+
+				continue;
+			}
+
+			// Obstacle
+			if (chanceToSpawnObject <= 0.15f)
+			{
+				worldObjects[chunk].push_back(
+					new Obstacle({ float(x),float(y) },
+						0,
+						0.25f,
+						obstacleTexture)
+				);
 			}
 		}
 	}
@@ -94,9 +154,32 @@ void World::UnloadChunk(const pair<int, int>& chunk)
 	worldObjects[chunk].clear();
 }
 
-void World::Update(const Vector2& playerPosition)
+void World::DeleteCoin(const WorldObject* coinToDelete)
 {
+	Vector2 coinPos = coinToDelete->getPosition();
+	collectedCoins.insert({ coinPos.x, coinPos.y });
+
+	for (auto& chunk : worldObjects) {
+		auto& objects = chunk.second;
+
+		for (auto it = objects.begin(); it != objects.end(); ++it) {
+			if (*it == coinToDelete) {
+				objects.erase(it);
+				break;
+			}
+		}
+	}
+
+	delete coinToDelete;
+}
+
+int World::Update(const Vector2& playerPosition, const float playerRadius)
+{
+	int playerDied = 0;
+
 	LoadUnloadChunks(playerPosition);
+
+	WorldObject* coinToDelete = nullptr;
 
 	for (auto it = loadedChunks.begin(); it != loadedChunks.end(); ++it)
 	{
@@ -104,8 +187,16 @@ void World::Update(const Vector2& playerPosition)
 		int s = worldObjects[chunk].size();
 		for (int i = 0; i < s; ++i) {
 			worldObjects[chunk][i]->Update();
+
+			int colResult = worldObjects[chunk][i]->CheckPlayerCollision(playerPosition, playerRadius);
+			if (colResult == 1) coinToDelete = worldObjects[chunk][i];
+			if (colResult == 0) playerDied = 1;
 		}
 	}
+
+	if (coinToDelete != nullptr) DeleteCoin(coinToDelete);
+
+	return playerDied;
 }
 
 void World::Render() 
@@ -114,8 +205,7 @@ void World::Render()
 	{
 		pair<int, int> chunk = *it;
 		int s = worldObjects[chunk].size();
-		for (int i = 0; i < s; ++i) {
-			worldObjects[chunk][i]->Render();
-		}
+
+		for (int i = 0; i < s; ++i) worldObjects[chunk][i]->Render();
 	}
 }
