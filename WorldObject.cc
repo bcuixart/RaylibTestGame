@@ -1,12 +1,12 @@
 #include "WorldObject.hh"
 
-WorldObject::WorldObject(Vector2 _position, float _rotation, float _scale, const Texture& _texture) 
+WorldObject::WorldObject(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures)
 {
 	position = _position;
 	rotation = _rotation;
 	scale = _scale;
 
-	texture = _texture;
+	textures = _textures;
 }
 
 Vector2 WorldObject::getPosition() const
@@ -24,7 +24,7 @@ float WorldObject::getScale() const
 	return scale;
 }
 
-void WorldObject::Update() 
+void WorldObject::Update(const float deltaTime)
 {
 
 }

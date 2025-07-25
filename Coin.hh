@@ -12,7 +12,7 @@ using namespace std;
 
 class Coin : public WorldObject {
 public:
-	Coin(Vector2 _position, float _rotation, float _scale, const Texture& _texture);
+	Coin(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures);
 
 	virtual void Render();
 

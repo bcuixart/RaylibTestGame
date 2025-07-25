@@ -51,7 +51,7 @@ int main()
 			StartGame(player, world, camera); // Restart if dead
 		}
 
-		int playerDied = world.Update(player.getPlayerPosition(), playerRadius);
+		int playerDied = world.Update(player.getPlayerPosition(), playerRadius, deltaTime);
 		if (playerDied) player.KillPlayer();
 
 		ClearBackground({ 133, 60, 217, 255 });

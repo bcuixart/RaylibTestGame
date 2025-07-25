@@ -95,7 +95,7 @@ private:
 	const bool DEBUG_PRINT_ROT = false;
 	const bool DEBUG_PRINT_VEL = false;
 
-	const bool DEBUG_PRINT_FIRE_TEXTURE = true;
+	const bool DEBUG_PRINT_FIRE_TEXTURE = false;
 	
 	const bool DEBUG_SHOW_HITBOX = false;
 };

@@ -120,7 +120,7 @@ void World::LoadChunk(const pair<int, int>& chunk)
 					new WorldObject({ float(x + chanceToSpawnObject*200),float(y + chanceToSpawnObject*200) },
 						0,
 						getRandomNumberBetween(1, 5, x, y),
-						coinTexture)
+						{ coinTexture })
 				);
 			}
 
@@ -131,7 +131,7 @@ void World::LoadChunk(const pair<int, int>& chunk)
 					new Coin({ float(x),float(y) }, 
 					getRandomNumberBetween(0, 3600, x, y),
 					.65f * chanceToSpawnObject + 0.065f / 2, 
-					coinTexture)
+						{ coinTexture })
 				);
 			}
 
@@ -141,8 +141,8 @@ void World::LoadChunk(const pair<int, int>& chunk)
 				worldObjects[chunk].push_back(
 					new Obstacle({ float(x),float(y) },
 						0,
-						0.25f,
-						obstacleTexture)
+						1.f,
+						obstacleTextures)
 				);
 			}
 		}
@@ -177,7 +177,7 @@ void World::DeleteCoin(const WorldObject* coinToDelete)
 	delete coinToDelete;
 }
 
-int World::Update(const Vector2& playerPosition, const float playerRadius)
+int World::Update(const Vector2& playerPosition, const float playerRadius, const float deltaTime)
 {
 	int playerDied = 0;
 
@@ -190,7 +190,7 @@ int World::Update(const Vector2& playerPosition, const float playerRadius)
 		pair<int, int> chunk = *it;
 		int s = worldObjects[chunk].size();
 		for (int i = 0; i < s; ++i) {
-			worldObjects[chunk][i]->Update();
+			worldObjects[chunk][i]->Update(deltaTime);
 
 			int colResult = worldObjects[chunk][i]->CheckPlayerCollision(playerPosition, playerRadius);
 			if (colResult == 1) coinToDelete = worldObjects[chunk][i];

@@ -1,13 +1,13 @@
 #include "Obstacle.hh"
 
-Obstacle::Obstacle(Vector2 _position, float _rotation, float _scale, const Texture& _texture)
-	: WorldObject(_position, _rotation, _scale, _texture)
+Obstacle::Obstacle(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures)
+	: WorldObject(_position, _rotation, _scale, _textures)
 {
 	position = _position;
 	rotation = _rotation;
 	scale = _scale;
 
-	texture = _texture;
+	textures = _textures;
 }
 
 int Obstacle::CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const
@@ -18,18 +18,23 @@ int Obstacle::CheckPlayerCollision(const Vector2& playerPos, const float playerR
 	return -1;
 }
 
+void Obstacle::Update(const float deltaTime) 
+{
+	currentTexture = std::fmod(currentTexture + ANIMATION_SPEED * deltaTime, textures.size());
+}
+
 void Obstacle::Render()
 {
-	Rectangle sourceRec = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+	Rectangle sourceRec = { 0.0f, 0.0f, (float)textures[0].width, (float)textures[0].height };
 	Rectangle destRec = {
-		position.x - (texture.width * scale) / 2,
-		position.y - (texture.height * scale) / 2,
-		(float)texture.width * scale,
-		(float)texture.height * scale
+		position.x - (textures[0].width * scale) / 2,
+		position.y - (textures[0].height * scale) / 2,
+		(float)textures[0].width * scale,
+		(float)textures[0].height * scale
 	};
 	Vector2 origin = { 0, 0 };
 
-	DrawTexturePro(texture, sourceRec, destRec, origin, 0, WHITE);
+	DrawTexturePro(textures[(int)currentTexture], sourceRec, destRec, origin, 0, WHITE);
 
 	if (DEBUG_SHOW_OBJECTS_HITBOX) DrawCircleLines(position.x, position.y, scale * OBSTACLE_RADIUS_SCALE_MULTIPLIER, RED);
 }
