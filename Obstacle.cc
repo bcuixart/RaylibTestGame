@@ -20,7 +20,7 @@ int Obstacle::CheckPlayerCollision(const Vector2& playerPos, const float playerR
 
 void Obstacle::Update(const float deltaTime) 
 {
-	currentTexture = std::fmod(currentTexture + ANIMATION_SPEED * deltaTime, textures.size());
+	currentTexture = std::max(1.f, (float)std::fmod(currentTexture + ANIMATION_SPEED * deltaTime, textures.size()));
 }
 
 void Obstacle::Render()
@@ -37,7 +37,8 @@ void Obstacle::Render()
 		(float)textures[0].height * scale / 2
 	};
 
-	DrawTexturePro(textures[(int)currentTexture], sourceRec, destRec, origin, rotation, WHITE);
+	DrawTexturePro(textures[0], sourceRec, destRec, origin, rotation, COLOR_BASE);
+	DrawTexturePro(textures[(int)currentTexture], sourceRec, destRec, origin, rotation, COLOR_CRATERS);
 
 	if (DEBUG_SHOW_OBJECTS_HITBOX) DrawCircleLines(position.x, position.y, scale * OBSTACLE_RADIUS_SCALE_MULTIPLIER, RED);
 }

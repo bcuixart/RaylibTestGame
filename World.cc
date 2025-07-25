@@ -5,6 +5,17 @@ World::World()
 	worldObjects = map<pair<int, int>, vector<WorldObject*>>();
 	loadedChunks = set<pair<int, int>>();
 	collectedCoins = set<pair<int, int>>();
+	obstacleTextures = vector<Texture>(OBSTACLE_TEXTURES + 1);
+
+	for (int i = 0; i <= OBSTACLE_TEXTURES; ++i) {
+		std::stringstream ss;
+		ss << "Assets/Textures/Asteroid/Obstacle_Asteroid_"
+			<< std::setfill('0') << std::setw(3) << (i)
+			<< ".png";
+		obstacleTextures[i] = LoadTexture(ss.str().c_str());
+
+		std::cout << ss.str() << std::endl;
+	}
 }
 
 void World::Start(int _seed) 
