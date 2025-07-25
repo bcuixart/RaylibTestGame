@@ -22,6 +22,8 @@ protected:
 
 private:
 	const float COIN_RADIUS_SCALE_MULTIPLIER = 250;
+
+	const Color COIN_COLOR = { 246, 247, 0, 255 };
 };
 
 #endif

@@ -27,7 +27,7 @@ void Coin::Render()
 	};
 	Vector2 origin = { 0, 0 };
 
-	DrawTexturePro(texture, sourceRec, destRec, origin, 0, WHITE);
+	DrawTexturePro(texture, sourceRec, destRec, origin, 0, COIN_COLOR);
 
     if (DEBUG_SHOW_OBJECTS_HITBOX) DrawCircleLines(position.x, position.y, scale * COIN_RADIUS_SCALE_MULTIPLIER, GREEN);
 }

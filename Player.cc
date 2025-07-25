@@ -23,8 +23,6 @@ void Player::Start()
 	playerPosition.x = 0;
 	playerPosition.y = 0;
 	playerRotation = 90;
-
-	currentPlayerTexture = 0;
 }
 
 void Player::KillPlayer() 
@@ -36,12 +34,14 @@ int Player::Update(float deltaTime)
 {
 	if (currentState == Dead) 
 	{
+		currentFireTexture = -1;
 		if (IsKeyPressed(KEY_SPACE)) return 1;
 		return 0;
 	}
 
 	if (currentState == WaitingToStart) 
 	{
+		currentFireTexture = -1;
 		if (!IsKeyPressed(KEY_SPACE)) return 0;
 		currentState = Playing;
 	}
@@ -54,14 +54,20 @@ int Player::Update(float deltaTime)
 		playerVelocity.x += ACCELERATION * rotationCos * deltaTime;
 		playerVelocity.y += ACCELERATION * rotationSin * deltaTime;
 
-		currentPlayerTexture = 1;
+		if (currentFireTexture == -1) currentFireTexture = 0;
+		currentFireTexture = currentFireTexture + FIRE_TEXTURE_SPEED * deltaTime;
+		if (currentFireTexture > (float)FIRE_TEXTURES) currentFireTexture = (float)FIRE_ACCELERATE_TEXTURES;
 	}
 	else
 	{
 		playerRotation = std::fmod(playerRotation + ROTATE_SPEED * deltaTime, 360.f);
 
-		currentPlayerTexture = 0;
+		if (currentFireTexture > (float)FIRE_ACCELERATE_TEXTURES) currentFireTexture = FIRE_ACCELERATE_TEXTURES;
+		currentFireTexture = currentFireTexture - FIRE_TEXTURE_SPEED * deltaTime;
+		if (currentFireTexture <= 0) currentFireTexture = -1;
 	}
+
+	if (DEBUG_PRINT_FIRE_TEXTURE) std::cout << currentFireTexture << std::endl;
 
 	float speed = std::sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.y * playerVelocity.y);
 	if (speed > 0)
@@ -95,14 +101,12 @@ int Player::Update(float deltaTime)
 
 void Player::Render() 
 {
-	DrawTexturePro(
-		playerTextures[currentPlayerTexture],
-		(Rectangle) { 0.0f, 0.0f, (float)textureWidth, (float)textureHeight },
-		(Rectangle) { playerPosition.x, playerPosition.y, (float)textureWidth / 4, (float)textureHeight / 4},
-		(Vector2) { (float)textureWidth * 1 / 8, (float)textureHeight * 1 / 8 },
-		-playerRotation + 90,
-		WHITE
-	);
+	Rectangle source = { 0.0f, 0.0f, (float)textureWidth, (float)textureHeight };
+	Rectangle dest = { playerPosition.x, playerPosition.y, (float)textureWidth / 8, (float)textureHeight / 8 };
+	Vector2 origin = { (float)textureWidth * 1 / 16, (float)textureHeight * 1 / 16 };
+
+	for (int i; i < BODY_PARTS_TEXTURES; ++i) DrawTexturePro(playerBodyTextures[i], source, dest, origin, -playerRotation + 90, playerBodyColors[i]);
+	if (currentFireTexture != -1) DrawTexturePro(fireTextures[(int)currentFireTexture], source, dest, origin, -playerRotation + 90, playerFireColor);
 
 	if (drawDirectionPoints) 
 	{

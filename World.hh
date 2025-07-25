@@ -46,7 +46,7 @@ private:
 	set<pair<int, int>> loadedChunks;
 	set<pair<int, int>> collectedCoins;
 
-	Texture coinTexture = LoadTexture("Assets/Coin_001.png");
+	Texture coinTexture = LoadTexture("Assets/Textures/Coin_001.png");
 	Texture obstacleTexture = LoadTexture("Assets/Obstacle_001.png");
 
 	const float CHUNK_SIZE = 500;
