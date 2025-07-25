@@ -60,8 +60,8 @@ int main()
 		camera.Update(player.getPlayerPosition(), GetScreenWidth(), GetScreenHeight(), deltaTime);
 		camera.MBeginMode2D();
 
-		player.Render();
 		world.Render();
+		player.Render();
 
 		EndDrawing();
 		EndMode2D();

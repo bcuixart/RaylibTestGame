@@ -27,14 +27,17 @@ void Obstacle::Render()
 {
 	Rectangle sourceRec = { 0.0f, 0.0f, (float)textures[0].width, (float)textures[0].height };
 	Rectangle destRec = {
-		position.x - (textures[0].width * scale) / 2,
-		position.y - (textures[0].height * scale) / 2,
+		position.x,
+		position.y,
 		(float)textures[0].width * scale,
 		(float)textures[0].height * scale
 	};
-	Vector2 origin = { 0, 0 };
+	Vector2 origin = {
+		(float)textures[0].width * scale / 2,
+		(float)textures[0].height * scale / 2
+	};
 
-	DrawTexturePro(textures[(int)currentTexture], sourceRec, destRec, origin, 0, WHITE);
+	DrawTexturePro(textures[(int)currentTexture], sourceRec, destRec, origin, rotation, WHITE);
 
 	if (DEBUG_SHOW_OBJECTS_HITBOX) DrawCircleLines(position.x, position.y, scale * OBSTACLE_RADIUS_SCALE_MULTIPLIER, RED);
 }

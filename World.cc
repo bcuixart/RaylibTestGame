@@ -129,7 +129,7 @@ void World::LoadChunk(const pair<int, int>& chunk)
 			{
 				worldObjects[chunk].push_back(
 					new Coin({ float(x),float(y) }, 
-					getRandomNumberBetween(0, 3600, x, y),
+					getRandomNumberBetween(0, 360 * 1 / chanceToSpawnCoin, x, y),
 					.65f * chanceToSpawnObject + 0.065f / 2, 
 						{ coinTexture })
 				);
@@ -140,8 +140,8 @@ void World::LoadChunk(const pair<int, int>& chunk)
 			{
 				worldObjects[chunk].push_back(
 					new Obstacle({ float(x),float(y) },
-						0,
-						1.f,
+						getRandomNumberBetween(0, 360 * 1 / chanceToSpawnObstacle, x, y),
+						std::pow(chanceToSpawnObject, 7),
 						obstacleTextures)
 				);
 			}

@@ -19,15 +19,18 @@ int Coin::CheckPlayerCollision(const Vector2& playerPos, const float playerRadiu
 void Coin::Render() 
 {
 	Rectangle sourceRec = { 0.0f, 0.0f, (float)textures[0].width, (float)textures[0].height };
-	Rectangle destRec = { 
-		position.x - (textures[0].width * scale) / 2,
-		position.y - (textures[0].height * scale) / 2,
+	Rectangle destRec = {
+		position.x,
+		position.y,
 		(float)textures[0].width * scale,
 		(float)textures[0].height * scale
 	};
-	Vector2 origin = { 0, 0 };
+	Vector2 origin = {
+		(float)textures[0].width * scale / 2,
+		(float)textures[0].height * scale / 2
+	};
 
-	DrawTexturePro(textures[0], sourceRec, destRec, origin, 0, COIN_COLOR);
+	DrawTexturePro(textures[0], sourceRec, destRec, origin, rotation, COIN_COLOR);
 
     if (DEBUG_SHOW_OBJECTS_HITBOX) DrawCircleLines(position.x, position.y, scale * COIN_RADIUS_SCALE_MULTIPLIER, GREEN);
 }
