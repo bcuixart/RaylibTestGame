@@ -25,7 +25,7 @@ public:
 	void Update(const Vector2& playerPosition, const float playerRadius, const float deltaTime);
 	void Render();
 
-	void Start(int _seed);
+	void Prepare(int _seed);
 	void ClearWorld();
 
 protected:

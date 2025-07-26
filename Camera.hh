@@ -12,9 +12,9 @@ class CameraManager {
 public:
 	CameraManager();
 
-	void Update(Vector2 playerPosition, int screenWidth, int screenHeight, float deltaTime);
+	void Update(const Vector2 playerPosition, const int screenWidth, const int screenHeight, const float deltaTime);
 
-	void Start();
+	void Prepare();
 
 	void MBeginMode2D();
 

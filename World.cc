@@ -19,7 +19,7 @@ World::World()
 	}
 }
 
-void World::Start(int _seed) 
+void World::Prepare(int _seed) 
 {
 	seed = _seed;
 

@@ -21,6 +21,23 @@ GameManager::GameState GameManager::GetGameState() const
 	return currentState;
 }
 
+void GameManager::PrepareGame() 
+{
+	world->ClearWorld();
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	unsigned int randomSeed = static_cast<unsigned int>(gen());
+	if (DEBUG_PRINT_SEED) std::cout << "Seed:" << randomSeed << std::endl;
+
+	world->Prepare(randomSeed);
+	player->Prepare();
+	camera->Prepare();
+
+	coinsCurrent = 0;
+}
+
 void GameManager::CollectCoin() 
 {
 	++coinsCurrent;
@@ -33,28 +50,31 @@ void GameManager::KillPlayer()
 		player->KillPlayer();
 
 		playerDeadTimeElapsed = 0;
-		currentState = JustDied;
+		currentState = PlayerDead;
 
 		coinsTotal += coinsCurrent;
 		if (coinsCurrent > coinsHighscore) coinsHighscore = coinsCurrent;
 	}
 }
 
-void GameManager::PrepareGame() 
+void GameManager::Update_MainMenu(const float deltaTime)
 {
-	world->ClearWorld();
+	if (IsKeyPressed(KEY_SPACE)) currentState = Playing;
+}
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
+void GameManager::Update_Playing(const float deltaTime)
+{
 
-	unsigned int randomSeed = static_cast<unsigned int>(gen());
-	if (DEBUG_PRINT_SEED) std::cout << "Seed:" << randomSeed << std::endl;
+}
 
-	world->Start(randomSeed);
-	player->Start();
-	camera->Start();
-
-	coinsCurrent = 0;
+void GameManager::Update_PlayerDead(const float deltaTime)
+{
+	playerDeadTimeElapsed += deltaTime;
+	if (playerDeadTimeElapsed >= PLAYER_DEAD_RETRY_TIME && IsKeyPressed(KEY_SPACE)) 
+	{
+		PrepareGame();
+		currentState = MainMenu;
+	}
 }
 
 void GameManager::Update(const int width, const int height) 
@@ -64,22 +84,15 @@ void GameManager::Update(const int width, const int height)
 	switch (currentState) 
 	{
 		case MainMenu: {
-			if (IsKeyPressed(KEY_SPACE)) currentState = Playing;
+			Update_MainMenu(deltaTime);
 			break;
 		}
 		case Playing: {
+			Update_Playing(deltaTime);
 			break;
 		}
-		case JustDied: {
-			playerDeadTimeElapsed += deltaTime;
-			if (playerDeadTimeElapsed >= PLAYER_DEAD_RETRY_TIME) currentState = Dead;
-			break;
-		}
-		case Dead: {
-			if (IsKeyPressed(KEY_SPACE)) {
-				PrepareGame();
-				currentState = MainMenu;
-			}
+		case PlayerDead: {
+			Update_PlayerDead(deltaTime);
 			break;
 		}
 	}

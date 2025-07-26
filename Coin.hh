@@ -14,7 +14,7 @@ class Coin : public WorldObject {
 public:
 	Coin(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures);
 
-	virtual void Update(float deltaTime);
+	virtual void Update(const float deltaTime);
 	virtual void Render();
 
 	virtual int CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const;

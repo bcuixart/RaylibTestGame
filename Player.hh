@@ -21,7 +21,7 @@ public:
 	void Update(float deltaTime);
 	void Render();
 
-	void Start();
+	void Prepare();
 
 	void KillPlayer();
 
@@ -33,9 +33,9 @@ protected:
 private:
 	void DeadMoveDebris(float deltaTime);
 
-	void Update_Dead(float deltaTime);
-	void Update_WaitingToStart(float deltaTime);
+	void Update_MainMenu(float deltaTime);
 	void Update_Playing(float deltaTime);
+	void Update_PlayerDead(float deltaTime);
 
 	void RenderBodyPart(const Texture& bodyPartTexture, const Vector2& bodyPartPosition, const Rectangle& source, const Vector2& origin, const Color& color);
 

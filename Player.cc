@@ -3,7 +3,7 @@
 
 Player::Player() 
 {
-	Start();
+	Prepare();
 }
 
 Vector2 Player::getPlayerPosition() const {
@@ -14,7 +14,7 @@ float Player::getPlayerRadius() const {
 	return HITBOX_RADIUS;
 }
 
-void Player::Start() 
+void Player::Prepare() 
 {
 	playerVelocity.x = 0;
 	playerVelocity.y = 0;
@@ -46,15 +46,7 @@ void Player::DeadMoveDebris(float deltaTime)
 	playerPositionPropeller002 = Vector2Add(playerPositionPropeller002, { y, x } );
 }
 
-void Player::Update_Dead(float deltaTime)
-{
-	currentFireTexture = -1;
-
-	DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
-	playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
-}
-
-void Player::Update_WaitingToStart(float deltaTime)
+void Player::Update_MainMenu(float deltaTime)
 {
 	currentFireTexture = -1;
 }
@@ -114,24 +106,28 @@ void Player::Update_Playing(float deltaTime)
 	if (DEBUG_PRINT_VEL) std::cout << playerVelocity.x << ' ' << playerVelocity.y << std::endl;
 }
 
+void Player::Update_PlayerDead(float deltaTime)
+{
+	currentFireTexture = -1;
+
+	DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
+	playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
+}
+
 void Player::Update(float deltaTime)
 {
 	switch (GameManager::instance->GetGameState()) 
 	{
-		case GameManager::GameState::JustDied: {
-			Update_Dead(deltaTime);
-			break;
-		}
-		case GameManager::GameState::Dead: {
-			Update_Dead(deltaTime);
-			break;
-		}
 		case GameManager::GameState::MainMenu: {
-			Update_WaitingToStart(deltaTime);
+			Update_MainMenu(deltaTime);
 			break;
 		}
 		case GameManager::GameState::Playing: {
 			Update_Playing(deltaTime);
+			break;
+		}
+		case GameManager::GameState::PlayerDead: {
+			Update_PlayerDead(deltaTime);
 			break;
 		}
 	}

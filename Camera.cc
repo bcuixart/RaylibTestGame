@@ -5,7 +5,7 @@ CameraManager::CameraManager()
 
 }
 
-void CameraManager::Start() 
+void CameraManager::Prepare() 
 {
 	cameraPosition.x = 0;
 	cameraPosition.y = 0;
@@ -16,7 +16,7 @@ Vector2 CameraManager::getCameraPosition() const
 	return cameraPosition;
 }
 
-void CameraManager::Update(Vector2 playerPosition, int screenWidth, int screenHeight, float deltaTime)
+void CameraManager::Update(const Vector2 playerPosition, const int screenWidth, const int screenHeight, const float deltaTime)
 {
 	camera = { 0 };
 

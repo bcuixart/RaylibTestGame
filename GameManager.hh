@@ -17,7 +17,7 @@ class GameManager {
 public:
 	GameManager();
 
-	enum GameState { MainMenu, Playing, JustDied, Dead };
+	enum GameState { MainMenu, Playing, PlayerDead };
 	GameState GetGameState() const;
 
 	void PrepareGame();
@@ -33,6 +33,10 @@ public:
 protected:
 
 private:
+
+	void Update_MainMenu(const float deltaTime);
+	void Update_Playing(const float deltaTime);
+	void Update_PlayerDead(const float deltaTime);
 
 	Player* player;
 	CameraManager* camera;
