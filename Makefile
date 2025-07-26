@@ -3,8 +3,8 @@ CXX = g++
 CXXFLAGS = -Wall
 LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
-SRC = main.cc Player.cc Camera.cc WorldObject.cc Coin.cc World.cc Obstacle.cc
-HDR = Player.hh Camera.hh WorldObject.hh Coin.hh World.hh Obstacle.hh
+SRC = main.cc Player.cc Camera.cc WorldObject.cc Coin.cc World.cc Obstacle.cc GameManager.cc
+HDR = Player.hh Camera.hh WorldObject.hh Coin.hh World.hh Obstacle.hh GameManager.hh
 OBJ = $(SRC:.cc=.o)
 
 TARGET = game

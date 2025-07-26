@@ -1,72 +1,25 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include <random>
 
 #include "raylib.h"
 #include "raymath.h"
 
-#include "Player.hh"
-#include "Camera.hh"
-#include "World.hh"
+#include "GameManager.hh"
 
 #define SCREEN_WIDTH 500
 #define SCREEN_HEIGHT 500
-
-const bool DEBUG_PRINT_SEED = false;
-
-void StartGame(Player& player, World& world, CameraManager& camera) 
-{
-	std::random_device rd;
-	std::mt19937 gen(rd());
-
-	unsigned int randomSeed = static_cast<unsigned int>(gen());
-	if (DEBUG_PRINT_SEED) std::cout << "Seed:" << randomSeed << std::endl;
-
-	world.ClearWorld();
-	world.Start(randomSeed);
-	player.Start();
-	camera.Start();
-}
 
 int main() 
 {
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dorga");
 
-	Player player = Player();
-	CameraManager camera = CameraManager();
-
-	World world = World();
-
-	StartGame(player, world, camera);
-
-	float playerRadius = player.getPlayerRadius();
+	GameManager gameManager = GameManager();
 
 	while (!WindowShouldClose()) 
 	{
-		float deltaTime = GetFrameTime();
-
-		int playerInfo = player.Update(deltaTime);
-		if (playerInfo == 1) {
-			StartGame(player, world, camera); // Restart if dead
-		}
-
-		int playerDied = world.Update(player.getPlayerPosition(), playerRadius, deltaTime);
-		if (playerDied) player.KillPlayer();
-
-		ClearBackground({ 133, 60, 217, 255 });
-		BeginDrawing();
-
-		camera.Update(player.getPlayerPosition(), GetScreenWidth(), GetScreenHeight(), deltaTime);
-		camera.MBeginMode2D();
-
-		world.Render();
-		player.Render();
-
-		EndDrawing();
-		EndMode2D();
-
-		DrawFPS(0, 0);
+		gameManager.Update();
+		gameManager.Render();
 	}
 
 	CloseWindow();

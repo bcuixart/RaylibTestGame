@@ -11,7 +11,7 @@ void CameraManager::Start()
 	cameraPosition.y = 0;
 }
 
-Vector2 CameraManager::getCameraPosition() 
+Vector2 CameraManager::getCameraPosition() const
 {
 	return cameraPosition;
 }

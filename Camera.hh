@@ -18,7 +18,7 @@ public:
 
 	void MBeginMode2D();
 
-	Vector2 getCameraPosition();
+	Vector2 getCameraPosition() const;
 
 protected:
 
