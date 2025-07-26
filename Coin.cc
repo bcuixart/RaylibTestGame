@@ -3,11 +3,7 @@
 Coin::Coin(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures)
 	: WorldObject(_position, _rotation, _scale, _textures)
 {
-	position = _position;
-	rotation = _rotation;
-	scale = _scale;
 
-	textures = _textures;
 }
 
 int Coin::CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const

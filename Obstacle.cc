@@ -3,11 +3,7 @@
 Obstacle::Obstacle(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures)
 	: WorldObject(_position, _rotation, _scale, _textures)
 {
-	position = _position;
-	rotation = _rotation;
-	scale = _scale;
 
-	textures = _textures;
 }
 
 int Obstacle::CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const
@@ -20,7 +16,8 @@ int Obstacle::CheckPlayerCollision(const Vector2& playerPos, const float playerR
 
 void Obstacle::Update(const float deltaTime) 
 {
-	currentTexture = std::max(1.f, (float)std::fmod(currentTexture + ANIMATION_SPEED * deltaTime, textures.size()));
+	currentTexture = currentTexture + ANIMATION_SPEED * deltaTime;
+	if (currentTexture >= textures.size()) currentTexture = 1;
 }
 
 void Obstacle::Render()

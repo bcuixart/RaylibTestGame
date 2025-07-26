@@ -17,17 +17,22 @@ class GameManager {
 public:
 	GameManager();
 
+	void StartGame();
+
 	void Update();
 	void Render();
+
+	void KillPlayer();
+
+	static GameManager* instance;
 
 protected:
 
 private:
-	void StartGame();
 
-	Player player;
-	CameraManager camera;
-	World world;
+	Player* player;
+	CameraManager* camera;
+	World* world;
 
 	float playerRadius;
 

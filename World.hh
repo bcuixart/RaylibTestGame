@@ -22,7 +22,7 @@ class World {
 public:
 	World();
 
-	int Update(const Vector2& playerPosition, const float playerRadius, const float deltaTime);
+	void Update(const Vector2& playerPosition, const float playerRadius, const float deltaTime);
 	void Render();
 
 	void Start(int _seed);
@@ -34,7 +34,9 @@ private:
 	float getRandomNumberFromSeed(int x, int y) const;
 	float getRandomNumberBetween(float min, float max, int x, int y) const;
 
-	void LoadUnloadChunks(const Vector2& playerPosition);
+	void LoadUnloadNearbyChunks(const Vector2& playerPosition);
+	void LoadNearbyChunks(const int minX, const int maxX, const int minY, const int maxY);
+	void UnloadNearbyChunks(const int minX, const int maxX, const int minY, const int maxY);
 
 	void LoadChunk(const pair<int, int>& chunk);
 	void UnloadChunk(const pair<int, int>& chunk);

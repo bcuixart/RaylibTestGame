@@ -18,7 +18,7 @@ class Player {
 public:
 	Player();
 
-	int Update(float deltaTime);
+	void Update(float deltaTime);
 	void Render();
 
 	void Start();
@@ -32,6 +32,13 @@ protected:
 
 private:
 	void DeadMoveDebris(float deltaTime);
+
+	void Update_JustDied(float deltaTime);
+	void Update_Dead(float deltaTime);
+	void Update_WaitingToStart(float deltaTime);
+	void Update_Playing(float deltaTime);
+
+	void RenderBodyPart(const Texture& bodyPartTexture, const Vector2& bodyPartPosition, const Rectangle& source, const Vector2& origin, const Color& color);
 
 	enum PlayerState { WaitingToStart, Playing, JustDied, Dead };
 

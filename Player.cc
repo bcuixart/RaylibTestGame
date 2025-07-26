@@ -1,4 +1,5 @@
 #include "Player.hh"
+#include "GameManager.hh"
 
 Player::Player() 
 {
@@ -24,19 +25,15 @@ void Player::Start()
 	playerPosition.y = 0;
 	playerRotation = 90;
 
-	playerPositionMain = playerPosition;
-	playerPositionWindow = playerPosition;
-	playerPositionPropeller000 = playerPosition;
-	playerPositionPropeller001 = playerPosition;
-	playerPositionPropeller002 = playerPosition;
-	playerPositionTop = playerPosition;
+	playerPositionMain = playerPositionWindow = playerPositionPropeller000 = playerPositionPropeller001 = playerPositionPropeller002 = playerPositionTop = playerPosition;
 
 	playerDeadDebrisSpeedMultiplier = 1;
 }
 
 void Player::KillPlayer() 
 {
-	if (currentState == Playing) {
+	if (currentState == Playing) 
+	{
 		playerDeadElapsed = 0;
 		playerDeadPosition = playerPosition;
 
@@ -46,53 +43,47 @@ void Player::KillPlayer()
 
 void Player::DeadMoveDebris(float deltaTime)
 {
-	playerPositionMain.x += playerVelocity.x * deltaTime;
-	playerPositionMain.y -= playerVelocity.y * deltaTime;
-	playerPositionWindow.x += playerVelocity.x * deltaTime;
-	playerPositionWindow.y -= playerVelocity.y * deltaTime;
-	playerPositionTop.x += playerVelocity.x * deltaTime * 1.25f;
-	playerPositionTop.y -= playerVelocity.y * deltaTime * 1.25f;
-	playerPositionPropeller000.x -= playerVelocity.y * deltaTime;
-	playerPositionPropeller000.y -= playerVelocity.x * deltaTime;
-	playerPositionPropeller001.x -= playerVelocity.x * deltaTime;
-	playerPositionPropeller001.y += playerVelocity.y * deltaTime;
-	playerPositionPropeller002.x += playerVelocity.y * deltaTime;
-	playerPositionPropeller002.y += playerVelocity.x * deltaTime;
+	float x = playerVelocity.x * deltaTime;
+	float y = playerVelocity.y * deltaTime;
+
+	playerPositionMain = Vector2Add(playerPositionMain, { x, -y } );
+	playerPositionWindow = Vector2Add(playerPositionWindow, { x, -y } );
+	playerPositionTop = Vector2Add(playerPositionTop, { x*1.25f, -y*1.25f } );
+	playerPositionPropeller000 = Vector2Add(playerPositionPropeller000, { -y, -x } );
+	playerPositionPropeller001 = Vector2Add(playerPositionPropeller001, { -x, y } );
+	playerPositionPropeller002 = Vector2Add(playerPositionPropeller002, { y, x } );
 }
 
-int Player::Update(float deltaTime)
+void Player::Update_JustDied(float deltaTime)
 {
-	if (currentState == JustDied)
-	{
-		currentFireTexture = -1;
+	currentFireTexture = -1;
 
-		playerDeadElapsed += deltaTime;
-		if (playerDeadElapsed >= PLAYER_DEAD_RETRY_TIME) currentState = Dead;
+	playerDeadElapsed += deltaTime;
+	if (playerDeadElapsed >= PLAYER_DEAD_RETRY_TIME) currentState = Dead;
 
-		DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
-		playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
+	DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
+	playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
+}
 
-		return 0;
-	}
+void Player::Update_Dead(float deltaTime)
+{
+	playerDeadElapsed += deltaTime;
 
-	if (currentState == Dead) 
-	{
-		playerDeadElapsed += deltaTime;
+	DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
+	playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
 
-		DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
-		playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
+	if (IsKeyPressed(KEY_SPACE)) GameManager::instance->StartGame();
+}
 
-		if (IsKeyPressed(KEY_SPACE)) return 1;
-		return 0;
-	}
+void Player::Update_WaitingToStart(float deltaTime)
+{
+	currentFireTexture = -1;
+	if (!IsKeyPressed(KEY_SPACE)) return;
+	currentState = Playing;
+}
 
-	if (currentState == WaitingToStart) 
-	{
-		currentFireTexture = -1;
-		if (!IsKeyPressed(KEY_SPACE)) return 0;
-		currentState = Playing;
-	}
-
+void Player::Update_Playing(float deltaTime)
+{
 	float rotationSin = std::sin(playerRotation * DEG_TO_RAD);
 	float rotationCos = std::cos(playerRotation * DEG_TO_RAD);
 
@@ -139,38 +130,55 @@ int Player::Update(float deltaTime)
 	playerPosition.x += playerVelocity.x * deltaTime;
 	playerPosition.y -= playerVelocity.y * deltaTime;
 
-	playerPositionMain = playerPosition;
-	playerPositionWindow = playerPosition;
-	playerPositionPropeller000 = playerPosition;
-	playerPositionPropeller001 = playerPosition;
-	playerPositionPropeller002 = playerPosition;
-	playerPositionTop = playerPosition;
+	playerPositionMain = playerPositionWindow = playerPositionPropeller000 = playerPositionPropeller001 = playerPositionPropeller002 = playerPositionTop = playerPosition;
 
 	if (DEBUG_PRINT_ROT) std::cout << playerRotation << std::endl;
 	if (DEBUG_PRINT_POS) std::cout << playerPosition.x << ' ' << playerPosition.y << std::endl;
 	if (DEBUG_PRINT_VEL) std::cout << playerVelocity.x << ' ' << playerVelocity.y << std::endl;
+}
 
-	return 0;
+void Player::Update(float deltaTime)
+{
+	switch (currentState) 
+	{
+		case JustDied: {
+			Update_JustDied(deltaTime);
+			break;
+		}
+		case Dead: {
+			Update_Dead(deltaTime);
+			break;
+		}
+		case WaitingToStart: {
+			Update_WaitingToStart(deltaTime);
+			break;
+		}
+		case Playing: {
+			Update_Playing(deltaTime);
+			break;
+		}
+	}
+}
+
+void Player::RenderBodyPart(const Texture& bodyPartTexture, const Vector2& bodyPartPosition, const Rectangle& source, const Vector2& origin, const Color& color)
+{
+	Rectangle dest = { bodyPartPosition.x, bodyPartPosition.y, (float)textureWidth / 8, (float)textureHeight / 8 };
+	DrawTexturePro(bodyPartTexture, source, dest, origin, -playerRotation + 90, color);
 }
 
 void Player::Render() 
 {
 	Rectangle source = { 0.0f, 0.0f, (float)textureWidth, (float)textureHeight };
-	Rectangle destMain = { playerPositionMain.x, playerPositionMain.y, (float)textureWidth / 8, (float)textureHeight / 8 };
-	Rectangle destWindow = { playerPositionWindow.x, playerPositionWindow.y, (float)textureWidth / 8, (float)textureHeight / 8 };
-	Rectangle destPropeller000 = { playerPositionPropeller000.x, playerPositionPropeller000.y, (float)textureWidth / 8, (float)textureHeight / 8 };
-	Rectangle destPropeller001 = { playerPositionPropeller001.x, playerPositionPropeller001.y, (float)textureWidth / 8, (float)textureHeight / 8 };
-	Rectangle destPropeller002 = { playerPositionPropeller002.x, playerPositionPropeller002.y, (float)textureWidth / 8, (float)textureHeight / 8 };
-	Rectangle destTop = { playerPositionTop.x, playerPositionTop.y, (float)textureWidth / 8, (float)textureHeight / 8 };
+	Rectangle destFire = { playerPositionMain.x, playerPositionMain.y, (float)textureWidth / 8, (float)textureHeight / 8 };
 	Vector2 origin = { (float)textureWidth * 1 / 16, (float)textureHeight * 1 / 16 };
 
-	DrawTexturePro(playerBodyMainTexture, source, destMain, origin, -playerRotation + 90, playerBodyColorLight);
-	DrawTexturePro(playerBodyWindowTexture, source, destWindow, origin, -playerRotation + 90, playerBodyColorDark);
-	DrawTexturePro(playerBodyPropeller000Texture, source, destPropeller000, origin, -playerRotation + 90, playerBodyColorDark);
-	DrawTexturePro(playerBodyPropeller001Texture, source, destPropeller001, origin, -playerRotation + 90, playerBodyColorDark);
-	DrawTexturePro(playerBodyPropeller002Texture, source, destPropeller002, origin, -playerRotation + 90, playerBodyColorDark);
-	DrawTexturePro(playerBodyTopTexture, source, destTop, origin, -playerRotation + 90, playerBodyColorDark);
-	if (currentFireTexture != -1) DrawTexturePro(fireTextures[(int)currentFireTexture], source, destMain, origin, -playerRotation + 90, playerFireColor);
+	RenderBodyPart(playerBodyMainTexture, playerPositionMain, source, origin, playerBodyColorLight);
+	RenderBodyPart(playerBodyWindowTexture, playerPositionMain, source, origin, playerBodyColorDark);
+	RenderBodyPart(playerBodyPropeller000Texture, playerPositionPropeller000, source, origin, playerBodyColorDark);
+	RenderBodyPart(playerBodyPropeller001Texture, playerPositionPropeller001, source, origin, playerBodyColorDark);
+	RenderBodyPart(playerBodyPropeller002Texture, playerPositionPropeller002, source, origin, playerBodyColorDark);
+	RenderBodyPart(playerBodyTopTexture, playerPositionTop, source, origin, playerBodyColorDark);
+	if (currentFireTexture != -1) DrawTexturePro(fireTextures[(int)currentFireTexture], source, destFire, origin, -playerRotation + 90, playerFireColor);
 
 	if (drawDirectionPoints) 
 	{

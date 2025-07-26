@@ -1,4 +1,5 @@
 #include "World.hh"
+#include "GameManager.hh"
 
 World::World() 
 {
@@ -62,7 +63,7 @@ float World::getRandomNumberBetween(float min, float max, int x, int y) const
 	return min + (max - min) * random;
 }
 
-void World::LoadUnloadChunks(const Vector2& playerPosition)
+void World::LoadUnloadNearbyChunks(const Vector2& playerPosition)
 {
 	int playerChunkX = int(playerPosition.x / CHUNK_SIZE);
 	int playerChunkY = int(playerPosition.y / CHUNK_SIZE);
@@ -72,7 +73,12 @@ void World::LoadUnloadChunks(const Vector2& playerPosition)
 	int minY = playerChunkY - PLAYER_LOAD_CHUNK_RADIUS;
 	int maxY = playerChunkY + PLAYER_LOAD_CHUNK_RADIUS;
 
-	// Carregar chunks
+	LoadNearbyChunks(minX, maxX, minY, maxY);
+	UnloadNearbyChunks(minX, maxX, minY, maxY);
+}
+
+void World::LoadNearbyChunks(const int minX, const int maxX, const int minY, const int maxY) 
+{
 	for (int x = minX; x <= maxX; ++x) {
 		for (int y = minY; y <= maxY; ++y) {
 
@@ -80,13 +86,14 @@ void World::LoadUnloadChunks(const Vector2& playerPosition)
 			if (loadedChunks.find(chunk) == loadedChunks.end())
 			{
 				if (DEBUG_PRINT_CHUNKINFO) std::cout << "Must load a chunk: " << x << ' ' << y << std::endl;
-
 				LoadChunk(chunk);
 			}
 		}
 	}
+}
 
-	// Borrar chunks
+void World::UnloadNearbyChunks(const int minX, const int maxX, const int minY, const int maxY) 
+{
 	for (auto it = loadedChunks.begin(); it != loadedChunks.end(); )
 	{
 		pair<int, int> chunk = *it;
@@ -188,11 +195,9 @@ void World::DeleteCoin(const WorldObject* coinToDelete)
 	delete coinToDelete;
 }
 
-int World::Update(const Vector2& playerPosition, const float playerRadius, const float deltaTime)
+void World::Update(const Vector2& playerPosition, const float playerRadius, const float deltaTime)
 {
-	int playerDied = 0;
-
-	LoadUnloadChunks(playerPosition);
+	LoadUnloadNearbyChunks(playerPosition);
 
 	WorldObject* coinToDelete = nullptr;
 
@@ -205,13 +210,11 @@ int World::Update(const Vector2& playerPosition, const float playerRadius, const
 
 			int colResult = worldObjects[chunk][i]->CheckPlayerCollision(playerPosition, playerRadius);
 			if (colResult == 1) coinToDelete = worldObjects[chunk][i];
-			if (colResult == 0) playerDied = 1;
+			if (colResult == 0) GameManager::instance->KillPlayer();
 		}
 	}
 
 	if (coinToDelete != nullptr) DeleteCoin(coinToDelete);
-
-	return playerDied;
 }
 
 void World::Render() 
