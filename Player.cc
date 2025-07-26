@@ -16,8 +16,6 @@ float Player::getPlayerRadius() const {
 
 void Player::Start() 
 {
-	currentState = WaitingToStart;
-
 	playerVelocity.x = 0;
 	playerVelocity.y = 0;
 
@@ -32,13 +30,7 @@ void Player::Start()
 
 void Player::KillPlayer() 
 {
-	if (currentState == Playing) 
-	{
-		playerDeadElapsed = 0;
-		playerDeadPosition = playerPosition;
-
-		currentState = JustDied;
-	}
+	playerDeadPosition = playerPosition;
 }
 
 void Player::DeadMoveDebris(float deltaTime)
@@ -54,32 +46,17 @@ void Player::DeadMoveDebris(float deltaTime)
 	playerPositionPropeller002 = Vector2Add(playerPositionPropeller002, { y, x } );
 }
 
-void Player::Update_JustDied(float deltaTime)
+void Player::Update_Dead(float deltaTime)
 {
 	currentFireTexture = -1;
 
-	playerDeadElapsed += deltaTime;
-	if (playerDeadElapsed >= PLAYER_DEAD_RETRY_TIME) currentState = Dead;
-
 	DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
 	playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
-}
-
-void Player::Update_Dead(float deltaTime)
-{
-	playerDeadElapsed += deltaTime;
-
-	DeadMoveDebris(deltaTime * playerDeadDebrisSpeedMultiplier);
-	playerDeadDebrisSpeedMultiplier = max(playerDeadDebrisSpeedMultiplier - PLAYER_DEAD_DECELERATION * deltaTime, PLAYER_DEAD_MIN_SPEED);
-
-	if (IsKeyPressed(KEY_SPACE)) GameManager::instance->StartGame();
 }
 
 void Player::Update_WaitingToStart(float deltaTime)
 {
 	currentFireTexture = -1;
-	if (!IsKeyPressed(KEY_SPACE)) return;
-	currentState = Playing;
 }
 
 void Player::Update_Playing(float deltaTime)
@@ -139,21 +116,21 @@ void Player::Update_Playing(float deltaTime)
 
 void Player::Update(float deltaTime)
 {
-	switch (currentState) 
+	switch (GameManager::instance->GetGameState()) 
 	{
-		case JustDied: {
-			Update_JustDied(deltaTime);
-			break;
-		}
-		case Dead: {
+		case GameManager::GameState::JustDied: {
 			Update_Dead(deltaTime);
 			break;
 		}
-		case WaitingToStart: {
+		case GameManager::GameState::Dead: {
+			Update_Dead(deltaTime);
+			break;
+		}
+		case GameManager::GameState::MainMenu: {
 			Update_WaitingToStart(deltaTime);
 			break;
 		}
-		case Playing: {
+		case GameManager::GameState::Playing: {
 			Update_Playing(deltaTime);
 			break;
 		}

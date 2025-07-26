@@ -214,7 +214,10 @@ void World::Update(const Vector2& playerPosition, const float playerRadius, cons
 		}
 	}
 
-	if (coinToDelete != nullptr) DeleteCoin(coinToDelete);
+	if (coinToDelete != nullptr) {
+		GameManager::instance->CollectCoin();
+		DeleteCoin(coinToDelete);
+	}
 }
 
 void World::Render() 

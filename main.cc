@@ -18,8 +18,11 @@ int main()
 
 	while (!WindowShouldClose()) 
 	{
-		gameManager.Update();
-		gameManager.Render();
+		int width = GetScreenWidth();
+		int height = GetScreenHeight();
+
+		gameManager.Update(width, height);
+		gameManager.Render(width, height);
 	}
 
 	CloseWindow();

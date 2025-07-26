@@ -33,16 +33,11 @@ protected:
 private:
 	void DeadMoveDebris(float deltaTime);
 
-	void Update_JustDied(float deltaTime);
 	void Update_Dead(float deltaTime);
 	void Update_WaitingToStart(float deltaTime);
 	void Update_Playing(float deltaTime);
 
 	void RenderBodyPart(const Texture& bodyPartTexture, const Vector2& bodyPartPosition, const Rectangle& source, const Vector2& origin, const Color& color);
-
-	enum PlayerState { WaitingToStart, Playing, JustDied, Dead };
-
-	PlayerState currentState = WaitingToStart;
 
 	Vector2 playerPosition = { 0, 0 };
 	float playerRotation = 0;
@@ -56,9 +51,6 @@ private:
 	const float ROTATE_SPEED = -300;
 
 	const float HITBOX_RADIUS = 12;
-
-	float playerDeadElapsed;
-	const float PLAYER_DEAD_RETRY_TIME = 1;
 
 	Vector2 playerDeadPosition;
 	const float PLAYER_DEAD_DECELERATION = 0.5f;

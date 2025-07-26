@@ -14,6 +14,7 @@ class Coin : public WorldObject {
 public:
 	Coin(Vector2 _position, float _rotation, float _scale, const vector<Texture>& _textures);
 
+	virtual void Update(float deltaTime);
 	virtual void Render();
 
 	virtual int CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const;
@@ -21,6 +22,8 @@ public:
 protected:
 
 private:
+	const float COIN_ROTATE_SPEED = 10;
+
 	const float COIN_RADIUS_SCALE_MULTIPLIER = 250;
 
 	const Color COIN_COLOR = { 246, 247, 0, 255 };
