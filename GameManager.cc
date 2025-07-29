@@ -21,6 +21,16 @@ GameManager::GameState GameManager::GetGameState() const
 	return currentState;
 }
 
+bool GameManager::GetIsKeyDown() const
+{
+	return IsMouseButtonDown(0) or IsKeyDown(KEY_SPACE);
+}
+
+bool GameManager::GetIsKeyPressed() const
+{
+	return IsMouseButtonPressed(0) or IsKeyPressed(KEY_SPACE);
+}
+
 void GameManager::PrepareGame() 
 {
 	world->ClearWorld();
@@ -59,7 +69,7 @@ void GameManager::KillPlayer()
 
 void GameManager::Update_MainMenu(const float deltaTime)
 {
-	if (IsKeyPressed(KEY_SPACE)) currentState = Playing;
+	if (GetIsKeyPressed()) currentState = Playing;
 }
 
 void GameManager::Update_Playing(const float deltaTime)
@@ -70,7 +80,7 @@ void GameManager::Update_Playing(const float deltaTime)
 void GameManager::Update_PlayerDead(const float deltaTime)
 {
 	playerDeadTimeElapsed += deltaTime;
-	if (playerDeadTimeElapsed >= PLAYER_DEAD_RETRY_TIME && IsKeyPressed(KEY_SPACE)) 
+	if (playerDeadTimeElapsed >= PLAYER_DEAD_RETRY_TIME && GetIsKeyPressed())
 	{
 		PrepareGame();
 		currentState = MainMenu;
@@ -112,7 +122,6 @@ void GameManager::Render(const int width, const int height)
 	world->Render();
 	player->Render();
 
-	EndDrawing();
 	EndMode2D();
 
 	char buff[100];
@@ -120,4 +129,6 @@ void GameManager::Render(const int width, const int height)
 	DrawText(buff, width / 2, 0, 25, WHITE);
 
 	DrawFPS(0, 0);
+
+	EndDrawing();
 }

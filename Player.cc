@@ -56,7 +56,7 @@ void Player::Update_Playing(float deltaTime)
 	float rotationSin = std::sin(playerRotation * DEG_TO_RAD);
 	float rotationCos = std::cos(playerRotation * DEG_TO_RAD);
 
-	if (IsKeyDown(KEY_SPACE))
+	if (GameManager::instance->GetIsKeyDown())
 	{
 		playerVelocity.x += ACCELERATION * rotationCos * deltaTime;
 		playerVelocity.y += ACCELERATION * rotationSin * deltaTime;

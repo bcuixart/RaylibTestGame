@@ -25,6 +25,9 @@ public:
 	void Update(const int width, const int height);
 	void Render(const int width, const int height);
 
+	bool GetIsKeyDown() const;
+	bool GetIsKeyPressed() const;
+
 	void CollectCoin();
 	void KillPlayer();
 
