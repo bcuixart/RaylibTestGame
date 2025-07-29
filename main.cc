@@ -14,6 +14,8 @@ int main()
 {
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dorga");
 
+	SetTargetFPS(60);
+
 	GameManager gameManager = GameManager();
 
 	while (!WindowShouldClose()) 
