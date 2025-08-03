@@ -9,8 +9,8 @@
 #include <string>
 #include <iomanip>
 
-#include "raylib.h"
-#include "raymath.h"
+#include <raylib.h>
+#include <raymath.h>
 
 #include "WorldObject.hh"
 #include "Coin.hh"

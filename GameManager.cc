@@ -9,11 +9,42 @@ GameManager::GameManager()
 	player = new Player();
 	camera = new CameraManager();
 	world = new World();
+    uiManager = new UIManager();
+    colorManager = new ColorManager();
 
 	playerRadius = player->getPlayerRadius();
 
 	currentState = MainMenu;
 	PrepareGame();
+}
+
+int GameManager::GetRandomNumber(int max) const
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, max);
+
+    return dis(gen);
+}
+
+int GameManager::GetRandomInRange(int min, int max) const
+{
+    return min + GetRandomNumber(max - min);
+}
+
+int GameManager::GetCoinsCurrent() const
+{
+    return coinsCurrent;
+}
+
+int GameManager::GetCoinsHighscore() const
+{
+    return coinsHighscore;
+}
+
+int GameManager::GetCoinsTotal() const
+{
+    return coinsTotal;
 }
 
 GameManager::GameState GameManager::GetGameState() const 
@@ -35,10 +66,7 @@ void GameManager::PrepareGame()
 {
 	world->ClearWorld();
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
-
-	unsigned int randomSeed = static_cast<unsigned int>(gen());
+	int randomSeed = GetRandomNumber(1000000);
 	if (DEBUG_PRINT_SEED) std::cout << "Seed:" << randomSeed << std::endl;
 
 	world->Prepare(randomSeed);
@@ -50,6 +78,10 @@ void GameManager::PrepareGame()
 
 void GameManager::CollectCoin() 
 {
+    SetSoundPitch(coinSounds[coinSoundIndex], (float) GetRandomInRange(13, 18) / 10.f);
+    PlaySound(coinSounds[coinSoundIndex]);
+    coinSoundIndex = (coinSoundIndex + 1) % COIN_SOUNDS;
+
 	++coinsCurrent;
 }
 
@@ -59,7 +91,9 @@ void GameManager::KillPlayer()
 	{
 		player->KillPlayer();
 
-		playerDeadTimeElapsed = 0;
+        StopMusicStream(music001);
+
+        playerDeadTimeElapsed = 0;
 		currentState = PlayerDead;
 
 		coinsTotal += coinsCurrent;
@@ -69,7 +103,11 @@ void GameManager::KillPlayer()
 
 void GameManager::Update_MainMenu(const float deltaTime)
 {
-	if (GetIsKeyPressed()) currentState = Playing;
+	if (GetIsKeyPressed())
+    {
+        PlayMusicStream(music001);
+        currentState = Playing;
+    }
 }
 
 void GameManager::Update_Playing(const float deltaTime)
@@ -83,6 +121,7 @@ void GameManager::Update_PlayerDead(const float deltaTime)
 	if (playerDeadTimeElapsed >= PLAYER_DEAD_RETRY_TIME && GetIsKeyPressed())
 	{
 		PrepareGame();
+        colorManager->NextPalette();
 		currentState = MainMenu;
 	}
 }
@@ -90,6 +129,8 @@ void GameManager::Update_PlayerDead(const float deltaTime)
 void GameManager::Update(const int width, const int height) 
 {
 	float deltaTime = GetFrameTime();
+
+    UpdateMusicStream(music001);
 
 	switch (currentState) 
 	{
@@ -114,7 +155,9 @@ void GameManager::Update(const int width, const int height)
 
 void GameManager::Render(const int width, const int height) 
 {
-	ClearBackground({ 133, 60, 217, 255 });
+    float deltaTime = GetFrameTime();
+
+    ClearBackground(colorManager->GetBackgroundColor());
 	BeginDrawing();
 
 	camera->MBeginMode2D();
@@ -124,11 +167,7 @@ void GameManager::Render(const int width, const int height)
 
 	EndMode2D();
 
-	char buff[100];
-	sprintf(buff, "Coins: %d", coinsCurrent);
-	DrawText(buff, width / 2, 0, 25, WHITE);
-
-	DrawFPS(0, 0);
+    uiManager->Render(GetScreenWidth(), GetScreenHeight(), deltaTime);
 
 	EndDrawing();
 }

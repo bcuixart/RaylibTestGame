@@ -4,12 +4,14 @@
 #include <iostream>
 #include <random>
 
-#include "raylib.h"
-#include "raymath.h"
+#include <raylib.h>
+#include <raymath.h>
 
 #include "Player.hh"
 #include "Camera.hh"
 #include "World.hh"
+#include "UIManager.hh"
+#include "ColorManager.hh"
 
 using namespace std;
 
@@ -25,13 +27,22 @@ public:
 	void Update(const int width, const int height);
 	void Render(const int width, const int height);
 
-	bool GetIsKeyDown() const;
+    int GetRandomNumber(int max) const;
+    int GetRandomInRange(int min, int max) const;
+
+    int GetCoinsCurrent() const;
+    int GetCoinsHighscore() const;
+    int GetCoinsTotal() const;
+
+    bool GetIsKeyDown() const;
 	bool GetIsKeyPressed() const;
 
 	void CollectCoin();
 	void KillPlayer();
 
 	static GameManager* instance;
+
+    ColorManager* colorManager;
 
 protected:
 
@@ -44,6 +55,17 @@ private:
 	Player* player;
 	CameraManager* camera;
 	World* world;
+    UIManager* uiManager;
+
+    const int COIN_SOUNDS = 3;
+    int coinSoundIndex = 0;
+    vector<Sound> coinSounds = {
+        LoadSound("Assets/Sounds/Coin_000.mp3"),
+        LoadSound("Assets/Sounds/Coin_001.mp3"),
+        LoadSound("Assets/Sounds/Coin_002.mp3"),
+    };
+
+    Music music001 = LoadMusicStream("Assets/Sounds/Music_001.mp3");
 
 	GameState currentState = MainMenu;
 

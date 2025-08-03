@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "raylib.h"
-#include "raymath.h"
+#include <raylib.h>
+#include <raymath.h>
 
 #include "WorldObject.hh"
 
@@ -27,9 +27,6 @@ private:
 	const bool DEBUG_PLAYER_INVINCIBLE = false;
 
 	float currentTexture = 0;
-
-	const Color COLOR_BASE = { 190, 130, 237, 255 };
-	const Color COLOR_CRATERS = { 150, 76, 225, 255 };
 
 	const float ANIMATION_SPEED = 20;
 };

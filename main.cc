@@ -2,30 +2,32 @@
 #include <cmath>
 #include <vector>
 
-#include "raylib.h"
-#include "raymath.h"
+#include <raylib.h>
+#include <raymath.h>
 
 #include "GameManager.hh"
 
-#define SCREEN_WIDTH 500
-#define SCREEN_HEIGHT 500
+#define SCREEN_WIDTH 0
+#define SCREEN_HEIGHT 0
 
-int main() 
+int main()
 {
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dorga");
+	InitAudioDevice();
 
 	SetTargetFPS(60);
 
-	GameManager gameManager = GameManager();
+	GameManager* gameManager = new GameManager();
 
-	while (!WindowShouldClose()) 
+	while (!WindowShouldClose())
 	{
 		int width = GetScreenWidth();
 		int height = GetScreenHeight();
 
-		gameManager.Update(width, height);
-		gameManager.Render(width, height);
+		gameManager->Update(width, height);
+		gameManager->Render(width, height);
 	}
 
+	CloseAudioDevice();
 	CloseWindow();
 }

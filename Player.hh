@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "raylib.h"
-#include "raymath.h"
+#include <raylib.h>
+#include <raymath.h>
 
 #define DEG_TO_RAD  M_PI / 180
 
@@ -71,9 +71,6 @@ private:
 	const Texture playerBodyPropeller002Texture = LoadTexture("Assets/Textures/Player_Body_Propeller_002.png");
 	const Texture playerBodyTopTexture = LoadTexture("Assets/Textures/Player_Body_Top.png");
 
-	const Color playerBodyColorLight = { 213, 167, 247, 255 };
-	const Color playerBodyColorDark = { 189, 129, 237, 255 };
-
 	const int textureWidth = playerBodyMainTexture.width;
 	const int textureHeight = playerBodyMainTexture.height;
 
@@ -93,7 +90,6 @@ private:
 		LoadTexture("Assets/Textures/Player_Fire_Moving_008.png"),
 		LoadTexture("Assets/Textures/Player_Fire_Moving_009.png"),
 	};
-	const Color playerFireColor = { 229, 197, 247, 255 };
 	float currentFireTexture = -1;
 
 	const float FIRE_TEXTURE_SPEED = 10;
