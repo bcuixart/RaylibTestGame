@@ -14,6 +14,7 @@
 
 #include "WorldObject.hh"
 #include "Coin.hh"
+#include "Checkpoint.hh"
 #include "Obstacle.hh"
 
 using namespace std;

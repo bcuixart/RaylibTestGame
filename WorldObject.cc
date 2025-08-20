@@ -36,6 +36,11 @@ int WorldObject::CheckPlayerCollision(const Vector2& playerPos, const float play
 	return -1;
 }
 
+void WorldObject::Collect() 
+{
+
+}
+
 void WorldObject::Render() 
 {
 	DrawCircle(position.x, position.y, scale, GameManager::instance->colorManager->GetBGStarColor());

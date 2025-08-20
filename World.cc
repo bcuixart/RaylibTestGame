@@ -124,6 +124,7 @@ void World::LoadChunk(const pair<int, int>& chunk)
 	int chunkDistance = sqrt(chunk.first * chunk.first + chunk.second * chunk.second);
 
 	float chanceToSpawnCoin = 0.1f;
+	float chanceToSpawnCheckpoint = 0.1f;
 	float chanceToSpawnObstacle = min(0.05f + 0.001f * chunkDistance, 0.3f);
 	if (chunk.first == 0 && chunk.second == 0) chanceToSpawnObstacle = chanceToSpawnCoin = 0;
 
@@ -142,15 +143,28 @@ void World::LoadChunk(const pair<int, int>& chunk)
 				);
 			}
 
-			// Coins
+			// Coins and checkpoints
 			if (chanceToSpawnObject <= chanceToSpawnCoin && collectedCoins.find({ x,y }) == collectedCoins.end())
 			{
-				worldObjects[chunk].push_back(
-					new Coin({ float(x),float(y) }, 
-					getRandomNumberBetween(0, 360 * 1 / chanceToSpawnCoin, x, y),
-					.65f * chanceToSpawnObject + 0.065f / 2, 
-						{ coinTexture })
-				);
+				if (chanceToSpawnObject <= chanceToSpawnCoin * chanceToSpawnCheckpoint) 
+				{
+					worldObjects[chunk].push_back(
+						new Checkpoint({ float(x),float(y) }, 
+						getRandomNumberBetween(0, 360 * 1 / chanceToSpawnCoin, x, y),
+						.65f * chanceToSpawnObject + 0.065f / 2, 
+							{ coinTexture })
+					);
+				}
+				else 
+				{
+					worldObjects[chunk].push_back(
+						new Coin({ float(x),float(y) }, 
+						getRandomNumberBetween(0, 360 * 1 / chanceToSpawnCoin, x, y),
+						.65f * chanceToSpawnObject + 0.065f / 2, 
+							{ coinTexture })
+					);
+				}
+
 			}
 
 			// Obstacle
@@ -199,7 +213,7 @@ void World::Update(const Vector2& playerPosition, const float playerRadius, cons
 {
 	LoadUnloadNearbyChunks(playerPosition);
 
-	WorldObject* coinToDelete = nullptr;
+	WorldObject* coinOrCheckpointToDelete = nullptr;
 
 	for (auto it = loadedChunks.begin(); it != loadedChunks.end(); ++it)
 	{
@@ -209,14 +223,15 @@ void World::Update(const Vector2& playerPosition, const float playerRadius, cons
 			worldObjects[chunk][i]->Update(deltaTime);
 
 			int colResult = worldObjects[chunk][i]->CheckPlayerCollision(playerPosition, playerRadius);
-			if (colResult == 1) coinToDelete = worldObjects[chunk][i];
+			if (colResult == 1 || colResult == 2) coinOrCheckpointToDelete = worldObjects[chunk][i];
 			if (colResult == 0) GameManager::instance->KillPlayer();
 		}
 	}
 
-	if (coinToDelete != nullptr) {
-		GameManager::instance->CollectCoin();
-		DeleteCoin(coinToDelete);
+	if (coinOrCheckpointToDelete != nullptr) 
+	{
+		coinOrCheckpointToDelete->Collect();
+		DeleteCoin(coinOrCheckpointToDelete);
 	}
 }
 

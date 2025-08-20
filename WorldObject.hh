@@ -18,6 +18,7 @@ public:
 	virtual void Render();
 
 	virtual int CheckPlayerCollision(const Vector2& playerPos, const float playerRadius) const;
+	virtual void Collect();
 
 	Vector2 getPosition() const;
 	float getRotation() const;
@@ -28,7 +29,7 @@ protected:
 	float rotation;
 	float scale;
 
-	const bool DEBUG_SHOW_OBJECTS_HITBOX = false;
+	const bool DEBUG_SHOW_OBJECTS_HITBOX = true;
 
 	vector<Texture> textures;
 };

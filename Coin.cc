@@ -13,6 +13,11 @@ int Coin::CheckPlayerCollision(const Vector2& playerPos, const float playerRadiu
 	return -1;
 }
 
+void Coin::Collect() 
+{
+	GameManager::instance->CollectCoin();
+}
+
 void Coin::Update(float deltaTime)
 {
 	rotation = std::fmod(rotation + COIN_ROTATE_SPEED * deltaTime, 360.f);

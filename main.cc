@@ -7,8 +7,8 @@
 
 #include "GameManager.hh"
 
-#define SCREEN_WIDTH 0
-#define SCREEN_HEIGHT 0
+#define SCREEN_WIDTH 500
+#define SCREEN_HEIGHT 500
 
 int main()
 {
