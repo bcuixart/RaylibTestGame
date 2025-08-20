@@ -15,7 +15,7 @@ int Coin::CheckPlayerCollision(const Vector2& playerPos, const float playerRadiu
 
 void Coin::Collect() 
 {
-	GameManager::instance->CollectCoin();
+	GameManager::instance->CollectCoin(position, rotation, scale);
 }
 
 void Coin::Update(float deltaTime)

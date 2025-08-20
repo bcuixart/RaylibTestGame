@@ -85,8 +85,10 @@ void GameManager::PrepareGame()
 	coinsCurrentTotal = 0;
 }
 
-void GameManager::CollectCoin() 
+void GameManager::CollectCoin(const Vector2& position, const float rotation, const float scale) 
 {
+	std::cout << scale << std::endl;
+
     SetSoundPitch(coinSounds[coinSoundIndex], (float) GetRandomInRange(13, 18) / 10.f);
     PlaySound(coinSounds[coinSoundIndex]);
     coinSoundIndex = (coinSoundIndex + 1) % COIN_SOUNDS;
@@ -94,12 +96,12 @@ void GameManager::CollectCoin()
 	++coinsCurrent;
 	++coinsCurrentTotal;
 
-	effectManager->AddCoinCollectedEffect(player->getPlayerPosition());
+	effectManager->AddCoinCollectedEffect(position, rotation, scale);
 }
 
 void GameManager::CollectCheckpoint()
 {
-	effectManager->AddCheckpointCoinMoveEffect(coinsCurrent, player->getPlayerPosition());
+	effectManager->AddCheckpointCoinMoveEffect(player->getPlayerPosition());
 
 	coinsTotal += coinsCurrent;
 	coinsCurrent = 0;
@@ -113,7 +115,7 @@ void GameManager::KillPlayer()
 
         StopMusicStream(music001);
 
-		effectManager->AddDeadCoinMoveEffect(coinsCurrent, player->getPlayerPosition());
+		effectManager->AddDeadCoinMoveEffect(player->getPlayerPosition());
 
         playerDeadTimeElapsed = 0;
 		currentState = PlayerDead;

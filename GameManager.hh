@@ -39,7 +39,7 @@ public:
     bool GetIsKeyDown() const;
 	bool GetIsKeyPressed() const;
 
-	void CollectCoin();
+	void CollectCoin(const Vector2& position, const float rotation, const float scale);
 	void CollectCheckpoint();
 	void KillPlayer();
 

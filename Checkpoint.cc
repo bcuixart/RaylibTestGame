@@ -41,5 +41,7 @@ void Checkpoint::Render()
 	DrawTexturePro(textures[0], sourceRec, destRec, origin, rotation, GameManager::instance->colorManager->GetCoinColor());
 	*/
 
+	DrawCircle(position.x, position.y, scale * CHECKPOINT_RADIUS_SCALE_MULTIPLIER, ORANGE);
+
     if (DEBUG_SHOW_OBJECTS_HITBOX) DrawCircleLines(position.x, position.y, scale * CHECKPOINT_RADIUS_SCALE_MULTIPLIER, ORANGE);
 }

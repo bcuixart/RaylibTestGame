@@ -11,28 +11,39 @@ void EffectManager::Clear()
     effects.clear();
 }
 
-void EffectManager::AddCoinCollectedEffect(const Vector2& position) 
+void EffectManager::AddCoinCollectedEffect(const Vector2& position, const float rotation, const float scale) 
 {
-	effects.push_back({ CoinCollected, 0, position, 0, 0, 0 });
+	effects.push_back({ CoinCollected, 0, position, rotation, scale, 0, 0 });
+
+    sizesForCoinEffects.push_back(scale);
 }
 
-void EffectManager::AddDeadCoinMoveEffect(const int quantity, const Vector2& position) 
+void EffectManager::AddDeadCoinMoveEffect(const Vector2& position) 
 {
+    int quantity = sizesForCoinEffects.size();
+
     float angleIncrement = 360.f / quantity;
 
     for (int i = 0; i < quantity; ++i) 
     {
 	    effects.push_back({ 
         DeadCoinMove, 
-        0, position, 
+        0, 
+        position, 
         angleIncrement * i * float(DEG_TO_RAD) + (float)GameManager::instance->GetRandomInRange(-20, 20), 
         (float)GameManager::instance->GetRandomInRange(40, 80),
-        0});
+        float(DEG_TO_RAD) * (float)GameManager::instance->GetRandomInRange(0, 360),
+        sizesForCoinEffects[i]
+        });
     }
+
+    sizesForCoinEffects.clear();
 }
 
-void EffectManager::AddCheckpointCoinMoveEffect(const int quantity, const Vector2& position) 
+void EffectManager::AddCheckpointCoinMoveEffect(const Vector2& position) 
 {
+    int quantity = sizesForCoinEffects.size();
+
     for (int i = 0; i < quantity; ++i) 
     {
 	    effects.push_back({ 
@@ -40,8 +51,28 @@ void EffectManager::AddCheckpointCoinMoveEffect(const int quantity, const Vector
         0, position, 
         position.x,
         position.y,
-        (float)GameManager::instance->GetRandomInRange(90, 110) / 100.f});
+        (float)GameManager::instance->GetRandomInRange(90, 110) / 100.f,
+        sizesForCoinEffects[i]}
+        );
     }
+
+    sizesForCoinEffects.clear();
+}
+
+void EffectManager::DrawEffectTexture(const Texture& texture, const Vector2& position, const float rotation, const float scale, const Color& color) 
+{
+	Rectangle sourceRec = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+	Rectangle destRec = {
+		position.x,
+		position.y,
+		(float)texture.width * scale,
+		(float)texture.height * scale
+	};
+	Vector2 origin = {
+		(float)texture.width * scale / 2,
+		(float)texture.height * scale / 2
+	};
+	DrawTexturePro(texture, sourceRec, destRec, origin, rotation, color);
 }
 
 bool EffectManager::RenderCoinCollected(Effect& effect, const float deltaTime) 
@@ -49,7 +80,9 @@ bool EffectManager::RenderCoinCollected(Effect& effect, const float deltaTime)
     effect.elapsedLife += deltaTime; 
     if (effect.elapsedLife >= DURATION_COIN_COLLECTED) return true; 
     
-    DrawCircle(effect.position.x, effect.position.y, 10, WHITE);
+    DrawEffectTexture(coinTexture, effect.position, effect.parameter1, effect.parameter2, GameManager::instance->colorManager->GetCoinColor());
+
+    if (DEBUG_DRAW_EFFECT_RADIUS) DrawCircleLines(effect.position.x, effect.position.y, 10, WHITE);
 
     return false;
 }
@@ -66,7 +99,11 @@ bool EffectManager::RenderDeadCoinMove(Effect& effect, const float deltaTime)
     effect.position.x += cos * speed * deltaTime;
     effect.position.y += sin * speed * deltaTime;
 
-    DrawCircle(effect.position.x, effect.position.y, 10, WHITE);
+    effect.parameter3 += effect.parameter2 * deltaTime;
+
+    DrawEffectTexture(coinTexture, effect.position, effect.parameter3, effect.parameter4, GameManager::instance->colorManager->GetCoinColor());
+
+    if (DEBUG_DRAW_EFFECT_RADIUS) DrawCircleLines(effect.position.x, effect.position.y, 10, WHITE);
 
     return false;
 }
@@ -74,14 +111,17 @@ bool EffectManager::RenderDeadCoinMove(Effect& effect, const float deltaTime)
 bool EffectManager::RenderCheckpoinCoinMove(Effect& effect, const float deltaTime, const Vector2& uiCoinPos) 
 {
     effect.elapsedLife += deltaTime; 
-    if (effect.elapsedLife >= DURATION_COIN_COLLECTED) return true; 
+    if (effect.elapsedLife >= DURATION_COIN_COLLECTED * effect.parameter3) return true; 
 
     float lerpValue = (effect.elapsedLife) / (DURATION_CHECKPOINT_COIN_MOVE * effect.parameter3);
+    float scaleMultiplier = -4*(lerpValue)*(lerpValue - 1);
     
     effect.position.x = Lerp(effect.parameter1, uiCoinPos.x, lerpValue);
     effect.position.y = Lerp(effect.parameter2, uiCoinPos.y, lerpValue);
 
-    DrawCircle(effect.position.x, effect.position.y, 10, WHITE);
+    DrawEffectTexture(coinTexture, effect.position, 0, effect.parameter4 * scaleMultiplier, GameManager::instance->colorManager->GetCoinColor());
+
+    if (DEBUG_DRAW_EFFECT_RADIUS) DrawCircleLines(effect.position.x, effect.position.y, 10, WHITE);
 
     return false;
 }

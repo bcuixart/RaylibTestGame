@@ -29,7 +29,7 @@ protected:
 	float rotation;
 	float scale;
 
-	const bool DEBUG_SHOW_OBJECTS_HITBOX = true;
+	const bool DEBUG_SHOW_OBJECTS_HITBOX = false;
 
 	vector<Texture> textures;
 };
