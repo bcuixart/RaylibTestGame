@@ -37,6 +37,11 @@ int GameManager::GetCoinsCurrent() const
     return coinsCurrent;
 }
 
+int GameManager::GetCoinsCurrentTotal() const
+{
+	return coinsCurrentTotal;
+}
+
 int GameManager::GetCoinsHighscore() const
 {
     return coinsHighscore;
@@ -74,6 +79,7 @@ void GameManager::PrepareGame()
 	camera->Prepare();
 
 	coinsCurrent = 0;
+	coinsCurrentTotal = 0;
 }
 
 void GameManager::CollectCoin() 
@@ -83,6 +89,13 @@ void GameManager::CollectCoin()
     coinSoundIndex = (coinSoundIndex + 1) % COIN_SOUNDS;
 
 	++coinsCurrent;
+	++coinsCurrentTotal;
+}
+
+void GameManager::CollectCheckpoint()
+{
+	coinsTotal += coinsCurrent;
+	coinsCurrent = 0;
 }
 
 void GameManager::KillPlayer() 
@@ -96,8 +109,7 @@ void GameManager::KillPlayer()
         playerDeadTimeElapsed = 0;
 		currentState = PlayerDead;
 
-		coinsTotal += coinsCurrent;
-		if (coinsCurrent > coinsHighscore) coinsHighscore = coinsCurrent;
+		if (coinsCurrentTotal > coinsHighscore) coinsHighscore = coinsCurrentTotal;
 	}
 }
 

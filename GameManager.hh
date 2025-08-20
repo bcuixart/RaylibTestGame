@@ -31,6 +31,7 @@ public:
     int GetRandomInRange(int min, int max) const;
 
     int GetCoinsCurrent() const;
+    int GetCoinsCurrentTotal() const;
     int GetCoinsHighscore() const;
     int GetCoinsTotal() const;
 
@@ -38,6 +39,7 @@ public:
 	bool GetIsKeyPressed() const;
 
 	void CollectCoin();
+	void CollectCheckpoint();
 	void KillPlayer();
 
 	static GameManager* instance;
@@ -71,6 +73,7 @@ private:
 
 	int coinsTotal = 0;
 	int coinsCurrent = 0;
+	int coinsCurrentTotal = 0;
 	int coinsHighscore = 0;
 
 	float playerRadius;

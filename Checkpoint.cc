@@ -15,7 +15,7 @@ int Checkpoint::CheckPlayerCollision(const Vector2& playerPos, const float playe
 
 void Checkpoint::Collect() 
 {
-
+	GameManager::instance->CollectCheckpoint();
 }
 
 void Checkpoint::Update(float deltaTime)

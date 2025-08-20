@@ -13,9 +13,11 @@ void UIManager::Render_MainMenu(const int screenWidth, const int screenHeight, c
 
 void UIManager::Render_Playing(const int screenWidth, const int screenHeight, const float deltaTime)
 {
+	DrawTexturePro(coinTexture, coinSourceRec, { (float)screenWidth - 55.f, 5.f, 20.f, 20.f }, {0,0}, 0, GameManager::instance->colorManager->GetCoinColor());
+
     char buff[100];
-    sprintf(buff, "Stars: %d", GameManager::instance->GetCoinsCurrent());
-    DrawText(buff, screenWidth / 2, 0, 25, WHITE);
+    sprintf(buff, "%d", GameManager::instance->GetCoinsTotal());
+    DrawText(buff, screenWidth - 30, 5, 25, WHITE);
 }
 
 void UIManager::Render_PlayerDead(const int screenWidth, const int screenHeight, const float deltaTime)
