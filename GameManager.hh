@@ -12,6 +12,7 @@
 #include "World.hh"
 #include "UIManager.hh"
 #include "ColorManager.hh"
+#include "EffectManager.hh"
 
 using namespace std;
 
@@ -58,6 +59,7 @@ private:
 	CameraManager* camera;
 	World* world;
     UIManager* uiManager;
+	EffectManager* effectManager;
 
     const int COIN_SOUNDS = 3;
     int coinSoundIndex = 0;

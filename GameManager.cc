@@ -11,6 +11,7 @@ GameManager::GameManager()
 	world = new World();
     uiManager = new UIManager();
     colorManager = new ColorManager();
+	effectManager = new EffectManager();
 
 	playerRadius = player->getPlayerRadius();
 
@@ -78,6 +79,8 @@ void GameManager::PrepareGame()
 	player->Prepare();
 	camera->Prepare();
 
+	effectManager->Clear();
+
 	coinsCurrent = 0;
 	coinsCurrentTotal = 0;
 }
@@ -90,10 +93,14 @@ void GameManager::CollectCoin()
 
 	++coinsCurrent;
 	++coinsCurrentTotal;
+
+	effectManager->AddCoinCollectedEffect(player->getPlayerPosition());
 }
 
 void GameManager::CollectCheckpoint()
 {
+	effectManager->AddCheckpointCoinMoveEffect(coinsCurrent, player->getPlayerPosition());
+
 	coinsTotal += coinsCurrent;
 	coinsCurrent = 0;
 }
@@ -105,6 +112,8 @@ void GameManager::KillPlayer()
 		player->KillPlayer();
 
         StopMusicStream(music001);
+
+		effectManager->AddDeadCoinMoveEffect(coinsCurrent, player->getPlayerPosition());
 
         playerDeadTimeElapsed = 0;
 		currentState = PlayerDead;
@@ -176,10 +185,11 @@ void GameManager::Render(const int width, const int height)
 
 	world->Render();
 	player->Render();
+	effectManager->Render(width, height, deltaTime, camera->getCameraPosition());
 
 	EndMode2D();
 
-    uiManager->Render(GetScreenWidth(), GetScreenHeight(), deltaTime);
+    uiManager->Render(width, height, deltaTime);
 
 	EndDrawing();
 }
