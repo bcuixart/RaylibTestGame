@@ -111,7 +111,10 @@ bool EffectManager::RenderDeadCoinMove(Effect& effect, const float deltaTime)
 bool EffectManager::RenderCheckpoinCoinMove(Effect& effect, const float deltaTime, const Vector2& uiCoinPos) 
 {
     effect.elapsedLife += deltaTime; 
-    if (effect.elapsedLife >= DURATION_COIN_COLLECTED * effect.parameter3) return true; 
+    if (effect.elapsedLife >= DURATION_COIN_COLLECTED * effect.parameter3) {
+        GameManager::instance->AddUITotalCoin();
+        return true; 
+    }
 
     float lerpValue = (effect.elapsedLife) / (DURATION_CHECKPOINT_COIN_MOVE * effect.parameter3);
     float scaleMultiplier = -4*(lerpValue)*(lerpValue - 1);

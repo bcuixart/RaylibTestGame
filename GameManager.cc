@@ -33,14 +33,14 @@ int GameManager::GetRandomInRange(int min, int max) const
     return min + GetRandomNumber(max - min);
 }
 
-int GameManager::GetCoinsCurrent() const
+int GameManager::GetCoinsCarrying() const
 {
-    return coinsCurrent;
+    return coinsCarrying;
 }
 
-int GameManager::GetCoinsCurrentTotal() const
+int GameManager::GetCoinsGrabbedThisRound() const
 {
-	return coinsCurrentTotal;
+	return coinsGrabbedThisRound;
 }
 
 int GameManager::GetCoinsHighscore() const
@@ -51,6 +51,11 @@ int GameManager::GetCoinsHighscore() const
 int GameManager::GetCoinsTotal() const
 {
     return coinsTotal;
+}
+
+int GameManager::GetCoinsTotalUI() const
+{
+    return coinsTotalUI;
 }
 
 GameManager::GameState GameManager::GetGameState() const 
@@ -81,20 +86,18 @@ void GameManager::PrepareGame()
 
 	effectManager->Clear();
 
-	coinsCurrent = 0;
-	coinsCurrentTotal = 0;
+	coinsCarrying = 0;
+	coinsGrabbedThisRound = 0;
 }
 
 void GameManager::CollectCoin(const Vector2& position, const float rotation, const float scale) 
 {
-	std::cout << scale << std::endl;
-
     SetSoundPitch(coinSounds[coinSoundIndex], (float) GetRandomInRange(13, 18) / 10.f);
     PlaySound(coinSounds[coinSoundIndex]);
     coinSoundIndex = (coinSoundIndex + 1) % COIN_SOUNDS;
 
-	++coinsCurrent;
-	++coinsCurrentTotal;
+	++coinsCarrying;
+	++coinsGrabbedThisRound;
 
 	effectManager->AddCoinCollectedEffect(position, rotation, scale);
 }
@@ -103,8 +106,13 @@ void GameManager::CollectCheckpoint()
 {
 	effectManager->AddCheckpointCoinMoveEffect(player->getPlayerPosition());
 
-	coinsTotal += coinsCurrent;
-	coinsCurrent = 0;
+	coinsTotal += coinsCarrying;
+	coinsCarrying = 0;
+}
+
+void GameManager::AddUITotalCoin()
+{
+	++coinsTotalUI;
 }
 
 void GameManager::KillPlayer() 
@@ -120,7 +128,7 @@ void GameManager::KillPlayer()
         playerDeadTimeElapsed = 0;
 		currentState = PlayerDead;
 
-		if (coinsCurrentTotal > coinsHighscore) coinsHighscore = coinsCurrentTotal;
+		if (coinsGrabbedThisRound > coinsHighscore) coinsHighscore = coinsGrabbedThisRound;
 	}
 }
 

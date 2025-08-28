@@ -31,10 +31,11 @@ public:
     int GetRandomNumber(int max) const;
     int GetRandomInRange(int min, int max) const;
 
-    int GetCoinsCurrent() const;
-    int GetCoinsCurrentTotal() const;
+    int GetCoinsCarrying() const;
+    int GetCoinsGrabbedThisRound() const;
     int GetCoinsHighscore() const;
     int GetCoinsTotal() const;
+    int GetCoinsTotalUI() const;
 
     bool GetIsKeyDown() const;
 	bool GetIsKeyPressed() const;
@@ -42,6 +43,8 @@ public:
 	void CollectCoin(const Vector2& position, const float rotation, const float scale);
 	void CollectCheckpoint();
 	void KillPlayer();
+
+	void AddUITotalCoin();
 
 	static GameManager* instance;
 
@@ -74,9 +77,10 @@ private:
 	GameState currentState = MainMenu;
 
 	int coinsTotal = 0;
-	int coinsCurrent = 0;
-	int coinsCurrentTotal = 0;
+	int coinsCarrying = 0;
+	int coinsGrabbedThisRound = 0;
 	int coinsHighscore = 0;
+	int coinsTotalUI = 0;
 
 	float playerRadius;
 
